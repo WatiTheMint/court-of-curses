@@ -81,6 +81,7 @@
     <nav class="nav" aria-label="Разделы">
       <a href="#lobby" data-nav="lobby"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Лобби</a>
       <a href="#rules" data-nav="rules"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg>Уложение</a>
+      <a href="#shop" data-nav="shop" aria-label="Лавка стикеров"><svg class="i" aria-hidden="true"><use href="#i-sticker"/></svg>Лавка<b class="nav-seals" id="navSeals" hidden></b></a>
     </nav>
   </div>
 </header>
@@ -185,6 +186,31 @@
         <aside class="rail" id="rail" aria-label="Протокол и настройки"></aside>
       </div>
     </div>
+  </section>
+
+  <!-- ЛАВКА -->
+  <section id="v-shop" class="wrap view" aria-label="Лавка стикеров" hidden>
+    <div class="shop-head">
+      <div>
+        <p class="eyebrow">[ лавка ] · коллекции стикеров</p>
+        <h1 class="display shop-title">Лавка</h1>
+        <p class="lead">Базовые и мемы - бесплатно. Остальные коллекции открываются за печати, которые ты зарабатываешь за столом.</p>
+      </div>
+      <div class="wallet" aria-label="Твои печати">
+        <p class="mid-k">Твои печати</p>
+        <p class="wallet-n"><b id="shopSeals">--</b><span aria-hidden="true">✦</span></p>
+        <ul class="earn">
+          <li><b>+1</b> за каждое своё очко в деле</li>
+          <li><b>+5</b> за победу в матче</li>
+          <li><b>+2</b> за доигранный матч без победы</li>
+          <li><b>+1</b> судье-человеку за каждый вердикт</li>
+          <li><b>+10</b> на старте</li>
+        </ul>
+        <p class="hint">Печати живут в этом браузере. Почистишь данные сайта - кошелёк начнётся заново.</p>
+      </div>
+    </div>
+    <p class="notice" id="shopNote" hidden></p>
+    <div class="packs" id="packList"></div>
   </section>
 
   <!-- УЛОЖЕНИЕ -->

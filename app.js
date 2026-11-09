@@ -51,8 +51,34 @@ var DOTSTK = {
     '...#######...','..#########..','.###########.','.##rr###rr##.','.##rr###rr##.','.###########.','.#####.#####.',
     '..#########..','...#.#.#.#...','...#######...']},
   gg:{label:'GG', art:[
-    '.###...rrr.','#...#.r...r','#.....r....','#.###.r.rrr','#...#.r...r','#...#.r...r','.###...rrr.']}
+    '.###...rrr.','#...#.r...r','#.....r....','#.###.r.rrr','#...#.r...r','#...#.r...r','.###...rrr.']},
+  /* коллекция «Зал суда» */
+  'c-gavel':{label:'ПОРЯДОК!', art:[
+    '.###########.','.###########.','.###########.','......#......','......#......','......#......','......#......','......#......','...rrrrrrr...','.rrrrrrrrrrr.']},
+  'c-scales':{label:'ВЗВЕСИМ', art:[
+    '.......#.......','###############','.#.....#.....#.','#.#....#....#.#','###....#....###','.......#.......','.......#.......','.....#####.....']},
+  'c-check':{label:'КАНОН', art:[
+    '..........#','.........##','........##.','#......##..','##....##...','.##..##....','..####.....','...##......']},
+  'c-cross':{label:'МИМО', art:[
+    'rr.....rr','.rr...rr.','..rr.rr..','...rrr...','..rr.rr..','.rr...rr.','rr.....rr']},
+  'c-eye':{label:'ВИЖУ ЛОЖЬ', art:[
+    '.....#####.....','...##.....##...','.##...rrr...##.','#....rrrrr....#','#....rr#rr....#','#....rrrrr....#','.##...rrr...##.','...##.....##...','.....#####.....']},
+  'c-heart':{label:'ЛОЙС', art:[
+    '.rrr...rrr.','r#rrr.rrrrr','rrrrrrrrrrr','rrrrrrrrrrr','.rrrrrrrrr.','..rrrrrrr..','...rrrrr...','....rrr....','.....r.....']},
+  'c-ghost':{label:'ЖУТЬ', art:[
+    '...#####...','..#######..','.#########.','.##..#..##.','.##..#..##.','.#########.','.###rrr###.','.#########.','.#########.','.##.###.##.','.#...#...#.']},
+  'c-crown':{label:'КОРОЛЬ', art:[
+    'r.....r.....r','#.....#.....#','##...###...##','###.#####.###','#############','#############','#############']},
+  'c-zap':{label:'ПРОКЛЯТО', art:[
+    '.....rrrr','....rrrr.','...rrrr..','..rrrr...','.rrrrrrrr','rrrrrrrr.','....rrr..','...rrr...','..rrr....','.rr......','r........']}
 };
+/* коллекции: бесплатные открыты всем, остальные за печати. Новые паки с картинками - в assets/packs/packs.json */
+var PACKS = [
+  {id:'base', name:'Базовые', desc:'Точечная матрица 15×15, как дисплей Nothing.', price:0, items:['ha','fire','bravo','canon','skull','gg']},
+  {id:'memes', name:'Мемы', desc:'Objection!, Джоске, BRUH, 333 IQ и диагноз «source issue».', price:0, items:['objection','wtf','bruh','iq333','source']},
+  {id:'court', name:'Зал суда', desc:'Девять точечных стикеров для заседаний: от «Порядок!» до «Проклято».', price:40, items:['c-gavel','c-scales','c-check','c-cross','c-eye','c-heart','c-ghost','c-crown','c-zap']}
+];
+var WELCOME_SEALS = 10;
 var DECK = [
   {name:'Касание Мидаса', trigger:'Касаешься чего-то голой кожей', effect:'Всё, чего коснулся, превращается в золото, включая живое', scale:'Навсегда, только ты', trap:''},
   {name:'Газовые жабы', trigger:'Действует постоянно', effect:'Любой газ, кроме кислорода и того, что нужно тебе для жизни, превращается в жаб: одна жаба на 20×20 см', scale:'Квадрат 24×24 м вокруг тебя, двигается вместе с тобой', trap:''},
@@ -98,20 +124,30 @@ function dotSVG(k){
   }
   return (DOT_SVG[k] = '<svg viewBox="0 0 150 150" aria-hidden="true" focusable="false">' + out + '</svg>');
 }
-function stickerPanelHTML(){
-  return '<p class="stk-sub">Мемы</p><div class="stickers">' + Object.keys(STICKERS).map(function(k){ var s = STICKERS[k];
-    return '<button class="stk-btn" type="button" data-act="react" data-v="' + k + '" aria-label="Отправить ' + esc(s.alt) + '"><img src="' + s.src + '" alt="" width="' + s.w + '" height="' + s.h + '" loading="lazy"></button>';
-  }).join('') + '</div><p class="stk-sub">Базовые</p><div class="stickers">' + Object.keys(DOTSTK).map(function(k){
-    return '<button class="stk-btn dot-btn" type="button" data-act="react" data-v="' + k + '" aria-label="Отправить стикер ' + DOTSTK[k].label + '"><span class="mx">' + dotSVG(k) + '</span><span class="dot-l">' + DOTSTK[k].label + '</span></button>';
-  }).join('') + '</div>';
+function plural(n, one, few, many){ var a = Math.abs(n) % 100, b = a % 10; if(a > 10 && a < 20) return many; if(b > 1 && b < 5) return few; if(b === 1) return one; return many; }
+function stickerBtn(k){
+  if(DOTSTK[k]) return '<button class="stk-btn dot-btn" type="button" data-act="react" data-v="' + k + '" aria-label="Отправить стикер ' + esc(DOTSTK[k].label) + '"><span class="mx">' + dotSVG(k) + '</span><span class="dot-l">' + esc(DOTSTK[k].label) + '</span></button>';
+  var s = STICKERS[k]; if(!s) return '';
+  return '<button class="stk-btn" type="button" data-act="react" data-v="' + k + '" aria-label="Отправить ' + esc(s.alt) + '"><img src="' + esc(s.src) + '" alt="" width="' + s.w + '" height="' + s.h + '" loading="lazy"></button>';
 }
+function packById(id){ return PACKS.filter(function(p){ return p.id === id; })[0] || null; }
+function ownsPack(p){ return !!p && (p.price === 0 || !!(S.player && Array.isArray(S.player.owned) && S.player.owned.indexOf(p.id) >= 0)); }
+function ownsSticker(k){ return PACKS.some(function(p){ return ownsPack(p) && p.items.indexOf(k) >= 0; }); }
+function ownedSig(){ return PACKS.filter(ownsPack).map(function(p){ return p.id; }).join(','); }
+function sealsNow(){ return S.player ? Math.max(0, +S.player.seals || 0) : 0; }
+function stickerPanelHTML(){
+  var mine = PACKS.filter(ownsPack), locked = PACKS.length - mine.length;
+  return mine.map(function(p){ return '<p class="stk-sub">' + esc(p.name) + '</p><div class="stickers">' + p.items.map(stickerBtn).join('') + '</div>'; }).join('') +
+    (locked ? '<a class="stk-more" href="#shop">' + ic('plus') + 'Ещё ' + locked + ' ' + plural(locked, 'коллекция', 'коллекции', 'коллекций') + ' в лавке</a>' : '');
+}
+function refreshTray(){ var t = $('stkTray'); if(t) t.innerHTML = '<p class="rail-h rule-h">Стикеры</p>' + stickerPanelHTML(); t._sig = ownedSig(); }
 
 /* ---------- state ---------- */
 var S = {
   db:null, auth:null, me:null, nick:(lsGet('sp-nick') || '').slice(0, 20), dbState:'loading', authErr:null,
   view:'lobby', code:null, match:null, matchState:'idle', unsubMatch:null,
   recent:[], mine:[], lobbyLoaded:false, lobbySlow:false, lobbyErr:null,
-  peers:[], lastReact:0, nameSync:false,
+  peers:[], lastReact:0, nameSync:false, player:null, playerErr:null,
   ui:{ newJudge: lsGet('sp-newJudge') === 'human' ? 'human' : 'ai', newFormat:6, appeal:false }
 };
 function canAct(){ return !!(S.db && S.me); }
@@ -621,6 +657,7 @@ function setTyping(){
 }
 function sendReact(k){
   if(!pres.code || !(DOTSTK[k] || STICKERS[k])) return;
+  if(!ownsSticker(k)){ toast('Эта коллекция ещё не твоя - загляни в лавку'); return; }
   var t = now(); if(t - S.lastReact < 1200) return; S.lastReact = t;
   addDoc(collection(S.db, 'matches', pres.code, 'events'), {t:k, uid:S.me, nick:S.nick || '', at:serverTimestamp()}).catch(function(e){ toast(dbErr(e)); });
 }
@@ -645,6 +682,113 @@ function showReaction(ev){
   setTimeout(function(){ el.remove(); }, st ? 2900 : 2600);
 }
 
+/* ---------- wallet & shop ---------- */
+function playerRef(){ return doc(S.db, 'players', S.me); }
+function subscribePlayer(){
+  var made = false;
+  onSnapshot(playerRef(), function(snap){
+    if(!snap.exists()){
+      if(snap.metadata.fromCache || made) return;
+      made = true;
+      runTransaction(S.db, async function(tx){
+        var s2 = await tx.get(playerRef());
+        if(!s2.exists()) tx.set(playerRef(), {seals:WELCOME_SEALS, owned:[], credited:{}, createdAt:now(), updatedAt:now()});
+      }).catch(function(e){ console.warn(e); S.playerErr = (e && e.code) || 'unknown'; scheduleRender(); });
+      return;
+    }
+    S.player = snap.data(); S.playerErr = null;
+    if($('stkTray')._sig !== ownedSig()) refreshTray();
+    creditAll();
+    scheduleRender();
+  }, function(e){ console.warn(e); S.playerErr = (e && e.code) || 'unknown'; scheduleRender(); });
+}
+var crediting = {};
+/* печати за доигранные дела: очки в деле, судейство, итог матча. Помечаем, что уже начислено, чтобы не платить дважды */
+function creditFrom(m){
+  if(!S.player || !S.me || !m || !m.code) return;
+  var seat = mySeat(m); if(!seat) return;
+  var key = m.code + '_' + (m.matchNo || 1), c = (S.player.credited || {})[key] || {n:0, fin:false};
+  var n = m.history.length, fin = m.status === 'finished';
+  if(c.n >= n && (c.fin || !fin)) return;
+  if(crediting[key]) return;
+  crediting[key] = 1;
+  runTransaction(S.db, async function(tx){
+    var snap = await tx.get(playerRef()); if(!snap.exists()) return 0;
+    var p = snap.data(), cc = (p.credited || {})[key] || {n:0, fin:false}, gain = 0;
+    for(var i = cc.n; i < n; i++){
+      var e = m.history[i] || {};
+      if(seat === 'j') gain += e.judge === 'human' ? 1 : 0;
+      else gain += (e.pts && +e.pts[seat]) || 0;
+    }
+    if(fin && !cc.fin && seat !== 'j'){ var sc = scores(m.history); gain += sc[seat] > sc[OTHER[seat]] ? 5 : 2; }
+    var patch = {seals:Math.max(0, +p.seals || 0) + gain, updatedAt:now()};
+    patch['credited.' + key] = {n:Math.max(cc.n, n), fin:!!(cc.fin || fin)};
+    tx.update(playerRef(), patch);
+    return gain;
+  }).then(function(gain){ if(gain > 0) toast('+' + gain + ' ' + plural(gain, 'печать', 'печати', 'печатей') + ' ✦ за дело'); })
+    .catch(function(e){ console.warn(e); })
+    .then(function(){ delete crediting[key]; });
+}
+function creditAll(){
+  if(S.match) creditFrom(S.match);
+  S.mine.forEach(function(d){ creditFrom(normM(d)); });
+}
+function buyPack(id){
+  var p = packById(id);
+  if(!p || ownsPack(p)) return;
+  if(!S.player) throw {toast: S.playerErr ? 'Кошелёк недоступен. Проверь интернет и обнови страницу.' : 'Кошелёк ещё создаётся, секунду'};
+  return runTransaction(S.db, async function(tx){
+    var snap = await tx.get(playerRef());
+    if(!snap.exists()) throw {toast:'Кошелёк ещё создаётся, секунду'};
+    var d = snap.data(), have = Math.max(0, +d.seals || 0), own = Array.isArray(d.owned) ? d.owned : [];
+    if(own.indexOf(id) >= 0) return;
+    if(have < p.price) throw {toast:'Не хватает ' + (p.price - have) + ' ' + plural(p.price - have, 'печати', 'печатей', 'печатей')};
+    tx.update(playerRef(), {seals:have - p.price, owned:own.concat([id]), updatedAt:now()});
+  }).then(function(){ toast('Коллекция «' + p.name + '» твоя. Ищи её в панели стикеров'); });
+}
+/* паки с картинками из assets/packs/packs.json (сюда лягут новые коллекции) */
+function loadPacks(){
+  return fetch('assets/packs/packs.json', {cache:'no-cache'}).then(function(r){ return r.ok ? r.json() : []; }).then(function(list){
+    (Array.isArray(list) ? list : []).forEach(function(p){
+      if(!p || !/^[a-z0-9]{1,8}$/.test(String(p.id || '')) || packById(p.id) || !Array.isArray(p.stickers) || !p.stickers.length) return;
+      var items = [];
+      p.stickers.slice(0, 12).forEach(function(s, i){
+        if(!s || !s.file) return;
+        var k = p.id + '-' + (i + 1);
+        STICKERS[k] = {alt:'стикер ' + String(s.alt || p.name || ''), src:'assets/packs/' + p.id + '/' + String(s.file), w:+s.w || 400, h:+s.h || 400, cut:!!s.cut};
+        items.push(k);
+      });
+      if(items.length) PACKS.push({id:p.id, name:String(p.name || p.id), desc:String(p.desc || ''), price:Math.max(0, Math.round(+p.price || 0)), items:items});
+    });
+  }).catch(function(e){ console.warn('packs.json', e); });
+}
+function packCover(p){
+  return '<div class="pack-cover' + (p.items.length > 6 ? ' many' : '') + '" aria-hidden="true">' + p.items.slice(0, 9).map(function(k){
+    if(DOTSTK[k]) return '<span class="pc mx">' + dotSVG(k) + '</span>';
+    var s = STICKERS[k]; return s ? '<span class="pc"><img src="' + esc(s.src) + '" alt="" loading="lazy"></span>' : '';
+  }).join('') + '</div>';
+}
+function renderShop(){
+  var bal = sealsNow();
+  $('shopSeals').textContent = S.player ? pad(bal) : '--';
+  var note = '';
+  if(S.authErr || S.dbState === 'none') note = 'Нет связи с базой игры. Проверь интернет и обнови страницу.';
+  else if(S.playerErr === 'permission-denied') note = 'Кошелёк закрыт правилами базы. Владельцу сайта: вставь свежий firestore.rules в Firebase → Firestore → Rules.';
+  else if(S.playerErr) note = 'Кошелёк не загрузился. Обнови страницу.';
+  var sn = $('shopNote');
+  if(note){ setHTML(sn, ic('alert') + '<span>' + esc(note) + '</span>'); sn.hidden = false; } else sn.hidden = true;
+  setHTML($('packList'), PACKS.map(function(p){
+    var own = ownsPack(p), free = p.price === 0, short = Math.max(0, p.price - bal);
+    var state = own ? '<span class="pill pill-own">' + ic('check') + (free ? 'Бесплатно · у тебя' : 'У тебя') + '</span>'
+      : '<span class="price"><b>' + p.price + '</b> печатей</span>';
+    var btn = own ? '' : '<button class="btn primary" type="button" data-act="buyPack" data-v="' + esc(p.id) + '"' + (S.player && short === 0 ? '' : ' disabled') + '>Купить</button>' +
+      (S.player && short > 0 ? '<span class="hint">не хватает ' + short + '</span>' : '');
+    return '<article class="pack' + (own ? ' is-own' : '') + '">' + packCover(p) +
+      '<div class="pack-body"><p class="eyebrow">' + p.items.length + ' ' + plural(p.items.length, 'стикер', 'стикера', 'стикеров') + '</p><h3 class="pack-t">' + esc(p.name) + '</h3>' + (p.desc ? '<p class="hint">' + esc(p.desc) + '</p>' : '') + '</div>' +
+      '<div class="pack-foot">' + state + btn + '</div></article>';
+  }).join('') + '<article class="pack pack-soon"><pre class="ascii" aria-hidden="true">┌───────┐\n│ ? ? ? │\n│ ? ? ? │\n└───────┘</pre><div class="pack-body"><p class="eyebrow">скоро</p><h3 class="pack-t">Новые коллекции</h3><p class="hint">Новые паки уже в работе.</p></div></article>');
+}
+
 /* ---------- routing & subscriptions ---------- */
 var prevM = null;
 function onMatch(m){
@@ -656,6 +800,7 @@ function onMatch(m){
     if(!r || !pr || pr.n !== r.n || (p.matchNo || 1) !== (m.matchNo || 1)) S.ui.appeal = false;
   }
   prevM = m;
+  creditFrom(m);
   if(mySeat(m) && S.nick && m.names[S.me] !== S.nick && !S.nameSync){
     S.nameSync = true;
     var patch = {}; patch['names.' + S.me] = S.nick;
@@ -682,6 +827,7 @@ function openTable(code){
 function route(){
   var h = location.hash.slice(1), view = 'lobby', code = null;
   if(h === 'rules') view = 'rules';
+  else if(h === 'shop') view = 'shop';
   else if(/^t-[a-z0-9]{4,8}$/.test(h)){ view = 'table'; code = h.slice(2); }
   var changed = view !== S.view;
   S.view = view;
@@ -703,7 +849,7 @@ function subscribeLobby(){
     });
   }
   sub(query(col, orderBy('updatedAt', 'desc'), limit(40)), function(d){ S.recent = d; });
-  sub(query(col, where('members', 'array-contains', S.me), limit(30)), function(d){ S.mine = d; });
+  sub(query(col, where('members', 'array-contains', S.me), limit(30)), function(d){ S.mine = d; creditAll(); });
 }
 
 /* ---------- render: lobby ---------- */
@@ -1058,7 +1204,7 @@ function stageBlocks(m){
 function railBlocks(m){
   var B = [], seat = mySeat(m), can = canAct();
   if(can){
-    B.push({id:'react', key:'react', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Стикеры</h3>' + stickerPanelHTML() + '<p class="hint">Видят все в зале.</p></section>'});
+    B.push({id:'react', key:'react|' + ownedSig(), html:'<section class="rail-sec"><h3 class="rail-h rule-h">Стикеры</h3>' + stickerPanelHTML() + '<p class="hint">Видят все в зале.</p></section>'});
   }
   var h = m.history.slice().reverse();
   B.push({id:'proto', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Протокол<small>' + pad(m.history.length) + '/' + pad(m.format) + '</small></h3>' +
@@ -1112,12 +1258,16 @@ function updateTitle(){
 }
 function closeTray(){ $('stkTray').hidden = true; $('stkFab').setAttribute('aria-expanded', 'false'); }
 function render(){
-  qsa('[data-nav]').forEach(function(a){ if(a.dataset.nav === (S.view === 'rules' ? 'rules' : 'lobby')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  var navOn = S.view === 'table' ? 'lobby' : S.view;
+  qsa('[data-nav]').forEach(function(a){ if(a.dataset.nav === navOn) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   $('v-lobby').hidden = S.view !== 'lobby';
   $('v-rules').hidden = S.view !== 'rules';
   $('v-table').hidden = S.view !== 'table';
+  $('v-shop').hidden = S.view !== 'shop';
+  var ns = $('navSeals'); ns.textContent = S.player ? String(sealsNow()) : ''; ns.hidden = !S.player;
   if(S.view === 'lobby') renderLobby();
   else if(S.view === 'table') renderTable();
+  else if(S.view === 'shop') renderShop();
   var fab = S.view === 'table' && S.matchState === 'ready' && canAct();
   $('stkFab').hidden = !fab;
   document.body.classList.toggle('has-fab', fab);
@@ -1161,6 +1311,7 @@ var ACT = {
   rematch: function(b){ act(b, rematch); },
   closeTable: function(b){ confirmBtn(b, 'Точно? Стол исчезнет', function(){ act(b, closeTable); }); },
   react: function(b){ sendReact(b.dataset.v); closeTray(); },
+  buyPack: function(b){ act(b, function(){ return buyPack(b.dataset.v); }); },
   stkToggle: function(){ var t = $('stkTray'), open = t.hidden; t.hidden = !open; $('stkFab').setAttribute('aria-expanded', String(open)); },
   closeCopy: function(){ $('copyBox').hidden = true; },
   nickSave: function(){ saveNick(); },
@@ -1208,9 +1359,10 @@ var tick = 0;
 setInterval(function(){ tickTimers(); tick++; if(tick % 15 === 0 && S.view === 'table') renderTable(); }, 1000);
 
 /* ---------- boot ---------- */
-$('stkTray').innerHTML = '<p class="rail-h rule-h">Стикеры</p>' + stickerPanelHTML();
+refreshTray();
 $('nickInput').value = S.nick;
 route();
+loadPacks().then(function(){ refreshTray(); scheduleRender(); });
 try{
   var app = initializeApp(firebaseConfig);
   S.auth = getAuth(app);
@@ -1220,6 +1372,7 @@ try{
     var first = !S.me;
     S.me = user.uid; S.dbState = 'ready'; S.authErr = null;
     if(first){
+      subscribePlayer();
       subscribeLobby();
       var code = S.code; S.code = null;
       if(S.view === 'table') openTable(code);

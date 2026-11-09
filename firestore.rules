@@ -56,5 +56,19 @@ service cloud.firestore {
           && request.resource.data.at == request.time;
       }
     }
+
+    // кошелёк печатей и купленные коллекции: видит и меняет только хозяин
+    match /players/{uid} {
+      function sane() {
+        return request.resource.data.seals is number
+          && request.resource.data.seals >= 0
+          && request.resource.data.owned is list
+          && request.resource.data.owned.size() <= 64;
+      }
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid && sane()
+        && request.resource.data.seals <= 10;
+      allow update: if signedIn() && request.auth.uid == uid && sane();
+    }
   }
 }
