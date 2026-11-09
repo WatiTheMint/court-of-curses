@@ -114,7 +114,7 @@ Party-игра на троих, выросшая из переписки «на�
 
 **Мемы**
 
-<img src="assets/stickers/objection.webp" alt="Objection!" height="64"> <img src="assets/stickers/wtf.webp" alt="What am I reading" height="64"> <img src="assets/stickers/bruh.webp" alt="Oh my god bruh" height="64"> <img src="assets/stickers/iq333.webp" alt="333 IQ" height="64"> <img src="assets/stickers/source.webp" alt="diagnosis: source issue" height="64">
+<img src="assets/stickers/objection.webp" alt="Objection!" height="64"> <img src="assets/stickers/wtf.webp" alt="What am I reading" height="64"> <img src="assets/stickers/bruh.webp" alt="Oh my god bruh" height="64"> <img src="assets/stickers/iq333.webp" alt="333 IQ" height="64"> <img src="assets/stickers/source.webp" alt="diagnosis: source issue" height="64"> <img src="assets/stickers/bulgaria.webp" alt="Болгария - единственная в мире страна" height="64">
 
 *Objection! ещё и трясёт стол.*
 

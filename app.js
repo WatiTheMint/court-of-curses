@@ -33,7 +33,8 @@ var STICKERS = {
   wtf:{alt:'стикер «что я сейчас прочитал»', src:'assets/stickers/wtf.webp', w:440, h:427, cut:true},
   bruh:{alt:'стикер OH MY GOD BRUH', src:'assets/stickers/bruh.webp', w:440, h:232, cut:true},
   iq333:{alt:'стикер 333 IQ', src:'assets/stickers/iq333.webp', w:400, h:438, cut:false},
-  source:{alt:'стикер diagnosis: source issue', src:'assets/stickers/source.webp', w:440, h:584, cut:true}
+  source:{alt:'стикер diagnosis: source issue', src:'assets/stickers/source.webp', w:440, h:584, cut:true},
+  bulgaria:{alt:'стикер «Болгария - единственная в мире страна»', src:'assets/stickers/bulgaria.webp', w:440, h:327, cut:true}
 };
 var DOTSTK = {
   ha:{label:'ХА-ХА', art:[
@@ -75,7 +76,7 @@ var DOTSTK = {
 /* коллекции: бесплатные открыты всем, остальные за печати. Новые паки с картинками - в assets/packs/packs.json */
 var PACKS = [
   {id:'base', name:'Базовые', desc:'Точечная матрица 15×15, как дисплей Nothing.', price:0, items:['ha','fire','bravo','canon','skull','gg']},
-  {id:'memes', name:'Мемы', desc:'Objection!, Джоске, BRUH, 333 IQ и диагноз «source issue».', price:0, items:['objection','wtf','bruh','iq333','source']},
+  {id:'memes', name:'Мемы', desc:'Objection!, Джоске, BRUH, 333 IQ, диагноз «source issue» и единственная в мире Болгария.', price:0, items:['objection','wtf','bruh','iq333','source','bulgaria']},
   {id:'court', name:'Зал суда', desc:'Девять точечных стикеров для заседаний: от «Порядок!» до «Проклято».', price:40, items:['c-gavel','c-scales','c-check','c-cross','c-eye','c-heart','c-ghost','c-crown','c-zap']}
 ];
 var WELCOME_SEALS = 10;
