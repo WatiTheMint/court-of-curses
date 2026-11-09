@@ -91,9 +91,9 @@
   <section id="v-lobby" class="wrap view" aria-label="Лобби">
     <div class="hero">
       <div>
-        <p class="eyebrow">[ 2 стороны ] + [ судья ] · онлайн</p>
+        <p class="eyebrow">[ дуэль или карусель до 6 ] + [ судья ] · онлайн</p>
         <h1 class="display">Суд Проклятий</h1>
-        <p class="lead">Один накладывает проклятие, второй снимает его контерпиком из аниме, игр, фильмов или книг. Судит третий - человек или ИИ, строго по Уложению и с источником. Без регистрации: ник, код стола - и в бой.</p>
+        <p class="lead">Один накладывает проклятие, второй снимает его контерпиком из аниме, игр, фильмов или книг. Судит человек, ИИ или присяжные - строго по Уложению и с источником. Дуэль на двоих или карусель до шести. Без регистрации: ник, код стола - и в бой.</p>
         <p class="term">&gt; зал открыт<span class="cur" aria-hidden="true"></span></p>
       </div>
       <div class="hero-w" aria-label="Статистика зала">
@@ -113,7 +113,7 @@
     </div>
 
     <ol class="how">
-      <li><span class="n">01</span><span><b>Открой стол</b>Выбери судью: ИИ или живой человек.</span></li>
+      <li><span class="n">01</span><span><b>Открой стол</b>Дуэль или карусель, судья - ИИ, человек или присяжные.</span></li>
       <li><span class="n">02</span><span><b>Позови соперника</b>Он вводит код стола и садится напротив.</span></li>
       <li><span class="n">03</span><span><b>Проклинайте</b>Контерпик только с источником, вердикт и очки сразу у всех.</span></li>
     </ol>
@@ -127,21 +127,34 @@
           <p class="err" id="nickInput-err" hidden><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg><span>Введи ник - его увидят соперники</span></p>
         </div>
         <div class="field">
+          <span class="lbl" id="lblMode">Режим</span>
+          <div class="seg" role="group" aria-labelledby="lblMode">
+            <button type="button" data-act="newMode" data-v="duel" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>Дуэль</button>
+            <button type="button" data-act="newMode" data-v="carousel" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-repeat"/></svg>Карусель</button>
+          </div>
+          <p class="hint" id="modeHint"></p>
+        </div>
+        <div class="field">
           <span class="lbl" id="lblJudge">Кто судит</span>
           <div class="seg" role="group" aria-labelledby="lblJudge">
-            <button type="button" data-act="newJudge" data-v="ai" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-bot"/></svg>ИИ по промту</button>
+            <button type="button" data-act="newJudge" data-v="ai" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-bot"/></svg>ИИ</button>
             <button type="button" data-act="newJudge" data-v="human" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-gavel"/></svg>Человек</button>
+            <button type="button" data-act="newJudge" data-v="jury" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>Присяжные</button>
           </div>
           <p class="hint" id="judgeHint"></p>
         </div>
         <div class="field">
           <span class="lbl" id="lblFormat">Сколько дел</span>
-          <div class="seg" role="group" aria-labelledby="lblFormat">
-            <button type="button" data-act="newFormat" data-v="4" aria-pressed="false">4 дела</button>
-            <button type="button" data-act="newFormat" data-v="6" aria-pressed="true">6 дел</button>
-            <button type="button" data-act="newFormat" data-v="10" aria-pressed="false">10 дел</button>
+          <div class="seg" role="group" aria-labelledby="lblFormat" id="fmtSeg"></div>
+          <p class="hint" id="fmtHint"></p>
+        </div>
+        <div class="field">
+          <span class="lbl" id="lblMods">Модификаторы <span class="opt">по желанию</span></span>
+          <div class="mods" role="group" aria-labelledby="lblMods">
+            <button type="button" class="mod" data-act="newMod" data-v="vow" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-scroll"/></svg><span><b>Связывающий обет</b><small>Каждому выпадают 3 вселенные - от одной он отказывается на весь матч.</small></span></button>
+            <button type="button" class="mod" data-act="newMod" data-v="scorch" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg><span><b>Выжженная земля</b><small>Вселенная сыгранного контерпика сгорает для всех.</small></span></button>
+            <button type="button" class="mod" data-act="newMod" data-v="lot" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-dice"/></svg><span><b>Жребий вселенных</b><small>Каждое дело Защите выпадают 3 вселенные - снимать только из них.</small></span></button>
           </div>
-          <p class="hint">6 - стандарт: каждый проклинает трижды.</p>
         </div>
         <button type="button" class="btn primary big wide" id="createBtn" data-act="create"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Открыть стол</button>
         <div class="divider">или</div>
@@ -204,6 +217,7 @@
           <li><b>+5</b> за победу в матче</li>
           <li><b>+2</b> за доигранный матч без победы</li>
           <li><b>+1</b> судье-человеку за каждый вердикт</li>
+          <li><b>+1</b> присяжному за каждый голос</li>
           <li><b>+10</b> на старте</li>
         </ul>
         <p class="hint">Печати живут в этом браузере. Почистишь данные сайта - кошелёк начнётся заново.</p>
@@ -222,8 +236,9 @@
 
       <h2><span class="art">§01</span>Стол</h2>
       <ul>
-        <li>Три места: Сторона А, Сторона Б и Судья. Если судит ИИ, третье место не нужно.</li>
-        <li>В каждом деле одна сторона - Обвинение, другая - Защита. Роли меняются каждое дело, первого обвинителя выбирает жребий.</li>
+        <li><b>Дуэль:</b> Сторона А, Сторона Б и Судья. Если судит ИИ или присяжные, места судьи нет.</li>
+        <li><b>Карусель:</b> от 3 до 6 игроков, каждый сам за себя. Подробнее - в §11.</li>
+        <li>В каждом деле один игрок - Обвинение, другой - Защита. Роли меняются каждое дело, первого обвинителя выбирает жребий.</li>
         <li>Остальные в зале - зрители. Они смотрят, кидают реакции и могут сесть на свободное место.</li>
       </ul>
 
@@ -261,7 +276,7 @@
       </ul>
 
       <h2><span class="art">§06</span>Сожжённые карты</h2>
-      <p>Персонаж, стенд или концепт, сыгранный в матче, сгорает для обоих игроков. Повтор - фол Защиты. Вселенную брать снова можно, конкретную способность - нет. Стол сам предупредит о повторе.</p>
+      <p>Персонаж, стенд или концепт, сыгранный в матче, сгорает для всех игроков. Повтор - фол Защиты. Вселенную брать снова можно, конкретную способность - нет (если не включена Выжженная земля). Стол сам предупредит о повторе.</p>
 
       <h2><span class="art">§07</span>Очки</h2>
       <div class="table-wrap">
@@ -271,7 +286,7 @@
             <tr><td><span class="mini-stamp ms-snyat">Снятие</span></td><td>проклятие снято или обезврежено по сути</td><td>Защита +2</td></tr>
             <tr><td><span class="mini-stamp ms-obhod">Обход</span></td><td>проклятие висит, но с ним можно жить</td><td>Защита +1</td></tr>
             <tr><td><span class="mini-stamp ms-proval">Провал</span></td><td>контерпик не работает</td><td>Обвинение +1</td></tr>
-            <tr><td><span class="mini-stamp ms-folD">Фол защиты</span></td><td>кинжальчик, отмычка, нет источника, выдумка, сожжённая карта</td><td>Обвинение +2</td></tr>
+            <tr><td><span class="mini-stamp ms-folD">Фол защиты</span></td><td>кинжальчик, отмычка, нет источника, выдумка, сожжённая карта, нарушенный модификатор</td><td>Обвинение +2</td></tr>
             <tr><td><span class="mini-stamp ms-folO">Фол обвинения</span></td><td>правка задним числом или нерешаемое проклятие</td><td>Защита +2</td></tr>
             <tr><td><span class="mini-stamp ms-grace">Изящество</span></td><td>особенно красивый ход, одной стороне</td><td>+1</td></tr>
           </tbody>
@@ -287,7 +302,7 @@
 
       <h2><span class="art">§09</span>Матч</h2>
       <ul>
-        <li>4, 6 или 10 дел. Каждая сторона проклинает поровну.</li>
+        <li>Дуэль - 4, 6 или 10 дел. Каждая сторона проклинает поровну. Карусель - 1, 2 или 3 круга.</li>
         <li>Ничья - ещё по делу каждому, пока кто-то не вырвется вперёд.</li>
         <li>Таймер хода - ориентир, а не закон: 2 минуты на проклятие, 3 на контерпик, полторы на прения.</li>
       </ul>
@@ -297,6 +312,32 @@
         <li>Судит нейтрально и только по Уложению, а не по симпатиям.</li>
         <li>Может скопировать промт в свой чат с ИИ и свериться. Решает всё равно сам.</li>
         <li>Если судья пропал, игроки могут отдать дело ИИ по промту.</li>
+      </ul>
+
+      <h2><span class="art">§11</span>Карусель</h2>
+      <ul>
+        <li>От 3 до 6 игроков. Порядок по кругу решает жребий в начале матча.</li>
+        <li>Каждое дело очередной игрок проклинает соседа по кругу. За круг каждый один раз проклинает и один раз защищается.</li>
+        <li>Со второго круга Защита сдвигается: проклинаешь уже не соседа, а следующего за ним. Так пары не повторяются.</li>
+        <li>Матч - 1, 2 или 3 круга. Если лидеров несколько, играется ещё круг.</li>
+        <li>Апелляция - одна на матч у каждого игрока, подаёт только тот, кто участвовал в деле.</li>
+      </ul>
+
+      <h2><span class="art">§12</span>Присяжные</h2>
+      <ul>
+        <li>В дуэли до 4 зрителей садятся в присяжные. В карусели судят все игроки, кто не участвует в деле.</li>
+        <li>Каждый присяжный тайно ставит печать. Когда проголосовали все, побеждает печать с большинством голосов. При равенстве - та, которую подняли раньше.</li>
+        <li>Изящество получает сторона, за которую его отметила больше чем половина присяжных.</li>
+        <li>Если присяжный пропал, игроки могут огласить вердикт, когда проголосовала хотя бы половина.</li>
+        <li>При апелляции присяжные голосуют заново.</li>
+      </ul>
+
+      <h2><span class="art">§13</span>Модификаторы</h2>
+      <ul>
+        <li><b>Связывающий обет.</b> Перед матчем каждому игроку выпадают 3 случайные вселенные. Одну он выбирает и отказывается от неё до конца матча. Обеты видят все. Контерпик из своей запретной вселенной - фол Защиты.</li>
+        <li><b>Выжженная земля.</b> Вселенная, из которой взяли контерпик, сгорает для всех до конца матча. Повтор - фол Защиты.</li>
+        <li><b>Жребий вселенных.</b> Каждое дело Защите выпадают 3 случайные вселенные. Снимать можно только из них, иначе фол Защиты.</li>
+        <li>Модификаторы включаются при создании стола или в сборе и сочетаются друг с другом. Стол сам предупреждает о нарушении, но последнее слово за судьёй.</li>
       </ul>
 
       <div class="box">

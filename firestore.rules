@@ -19,7 +19,7 @@ service cloud.firestore {
       function keepsIdentity() {
         return request.resource.data.code == resource.data.code
           && request.resource.data.createdBy == resource.data.createdBy
-          && request.resource.data.members.size() <= 12;
+          && request.resource.data.members.size() <= 20;
       }
 
       // новичок может только сесть: добавить себя в members, занять место, записать ник

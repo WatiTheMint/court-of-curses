@@ -17,6 +17,85 @@ const firebaseConfig = {
 
 /* ---------- constants ---------- */
 var OTHER = {a:'b', b:'a'};
+var PSEATS = {duel:['a','b'], carousel:['a','b','c','d','e','f']};
+var KSEATS = ['k1','k2','k3','k4'];
+var ALLSEATS = ['a','b','c','d','e','f','j','k1','k2','k3','k4'];
+var SEATL = {a:'А', b:'Б', c:'В', d:'Г', e:'Д', f:'Е'};
+var FORMATS = {duel:[4,6,10], carousel:[1,2,3]};
+var MODE_LABEL = {duel:'Дуэль', carousel:'Карусель'};
+var JUDGE_LABEL = {ai:'ИИ по промту', human:'судья-человек', jury:'присяжные'};
+var MODS = {
+  vow:{name:'Связывающий обет', short:'обет', icon:'scroll', desc:'Перед матчем каждому выпадают 3 случайные вселенные. Одну выбираешь и отказываешься от неё до конца матча.'},
+  scorch:{name:'Выжженная земля', short:'выжженная земля', icon:'flame', desc:'Вселенная, из которой взяли контерпик, сгорает для всех до конца матча.'},
+  lot:{name:'Жребий вселенных', short:'жребий', icon:'dice', desc:'Каждое дело Защите выпадают 3 случайные вселенные. Снимать можно только из них.'}
+};
+var MOD_KEYS = ['vow','scorch','lot'];
+/* вселенные для модификаторов: имя и как их обычно пишут (по этим словам стол узнаёт вселенную в поле «Произведение») */
+var VERSES = [
+  {id:'jojo', name:'JoJo', al:['jojo','джоджо','жожо','jjba']},
+  {id:'naruto', name:'Наруто', al:['naruto','наруто','boruto','боруто']},
+  {id:'onepiece', name:'One Piece', al:['one piece','ван пис','ванпис']},
+  {id:'bleach', name:'Блич', al:['bleach','блич']},
+  {id:'jjk', name:'Магическая битва', al:['магическая битва','jujutsu','jjk','дзюдзюцу','джуджуцу']},
+  {id:'csm', name:'Человек-бензопила', al:['бензопила','chainsaw','csm']},
+  {id:'aot', name:'Атака титанов', al:['атака титанов','attack on titan','aot','shingeki','вторжение гигантов']},
+  {id:'opm', name:'Ванпанчмен', al:['ванпанчмен','one punch','onepunch','ванпанч','opm']},
+  {id:'mob', name:'Моб Психо 100', al:['моб психо','mob psycho']},
+  {id:'hxh', name:'Hunter x Hunter', al:['hunter x hunter','hunter hunter','хантер','hxh']},
+  {id:'db', name:'Dragon Ball', al:['dragon ball','драгонболл','драгон болл','жемчуг дракона','dbz']},
+  {id:'fate', name:'Fate', al:['fate','фейт']},
+  {id:'eva', name:'Евангелион', al:['евангелион','evangelion']},
+  {id:'dn', name:'Тетрадь смерти', al:['тетрадь смерти','death note']},
+  {id:'fma', name:'Стальной алхимик', al:['стальной алхимик','fullmetal','fma']},
+  {id:'berserk', name:'Берсерк', al:['берсерк','berserk']},
+  {id:'rezero', name:'Re:Zero', al:['re zero','rezero','резеро','ре зеро']},
+  {id:'frieren', name:'Фрирен', al:['фрирен','frieren']},
+  {id:'ds', name:'Клинок, рассекающий демонов', al:['клинок рассекающий','demon slayer','kimetsu']},
+  {id:'mha', name:'Моя геройская академия', al:['геройская академия','my hero academia','boku no hero','mha','бнха']},
+  {id:'sl', name:'Поднятие уровня в одиночку', al:['solo leveling','поднятие уровня']},
+  {id:'tg', name:'Токийский гуль', al:['токийский гуль','tokyo ghoul']},
+  {id:'souls', name:'Dark Souls и Elden Ring', al:['dark souls','дарк соулс','elden ring','элден ринг','bloodborne','бладборн','sekiro','секиро']},
+  {id:'tes', name:'The Elder Scrolls', al:['elder scrolls','skyrim','скайрим','oblivion','обливион','morrowind','морровинд']},
+  {id:'mc', name:'Minecraft', al:['minecraft','майнкрафт','майн']},
+  {id:'ut', name:'Undertale и Deltarune', al:['undertale','андертейл','deltarune','дельтарун']},
+  {id:'hoyo', name:'Genshin и Honkai', al:['genshin','геншин','honkai','хонкай']},
+  {id:'doom', name:'DOOM', al:['doom','дум']},
+  {id:'hl', name:'Half-Life и Portal', al:['half life','халф лайф','portal','портал']},
+  {id:'wh', name:'Warhammer 40k', al:['warhammer','вархаммер','вархамер','40k','40к']},
+  {id:'poke', name:'Покемоны', al:['pokemon','покемон','pokémon']},
+  {id:'zelda', name:'The Legend of Zelda', al:['zelda','зельда']},
+  {id:'mario', name:'Mario', al:['mario','марио']},
+  {id:'hk', name:'Hollow Knight', al:['hollow knight','холлоу кнайт','полый рыцарь','silksong']},
+  {id:'terraria', name:'Terraria', al:['terraria','террария']},
+  {id:'dota', name:'Dota 2', al:['dota','дота']},
+  {id:'lol', name:'League of Legends', al:['league of legends','arcane','аркейн','lol']},
+  {id:'ow', name:'Overwatch', al:['overwatch','овервотч']},
+  {id:'persona', name:'Persona', al:['persona','персона','shin megami','smt']},
+  {id:'ff', name:'Final Fantasy', al:['final fantasy','файнал фэнтези','ff7','ffxiv']},
+  {id:'wc', name:'Warcraft и StarCraft', al:['warcraft','варкрафт','starcraft','старкрафт','wow']},
+  {id:'fallout', name:'Fallout', al:['fallout','фоллаут']},
+  {id:'mk', name:'Mortal Kombat', al:['mortal kombat','мортал комбат']},
+  {id:'dnd', name:'D&D', al:['d d','dnd','днд','dungeons','подземелья и драконы','forgotten realms','забытые королевства']},
+  {id:'scp', name:'SCP', al:['scp']},
+  {id:'cth', name:'Лавкрафт', al:['лавкрафт','lovecraft','ктулху','cthulhu']},
+  {id:'marvel', name:'Marvel', al:['marvel','марвел','мстители','avengers','x men','люди икс']},
+  {id:'dc', name:'DC', al:['dc','бэтмен','batman','супермен','superman','лига справедливости']},
+  {id:'sw', name:'Звёздные войны', al:['звездные войны','star wars','джедай']},
+  {id:'hp', name:'Гарри Поттер', al:['гарри поттер','harry potter','поттер','хогвартс']},
+  {id:'lotr', name:'Толкин', al:['властелин колец','lord of the rings','толкин','tolkien','хоббит','сильмариллион']},
+  {id:'witcher', name:'Ведьмак', al:['ведьмак','witcher']},
+  {id:'got', name:'Игра престолов', al:['игра престолов','game of thrones','песнь льда','дом дракона']},
+  {id:'matrix', name:'Матрица', al:['матрица','matrix']},
+  {id:'dw', name:'Доктор Кто', al:['доктор кто','doctor who']},
+  {id:'st', name:'Звёздный путь', al:['звездный путь','star trek']},
+  {id:'rm', name:'Рик и Морти', al:['рик и морти','rick and morty','rick morty']},
+  {id:'gf', name:'Гравити Фолз', al:['гравити фолз','gravity falls']},
+  {id:'atla', name:'Аватар: Легенда об Аанге', al:['аватар','avatar','аанг','корра']},
+  {id:'at', name:'Время приключений', al:['время приключений','adventure time']},
+  {id:'dune', name:'Дюна', al:['дюна','dune']},
+  {id:'king', name:'Стивен Кинг', al:['стивен кинг','stephen king']},
+  {id:'myth', name:'Мифы и легенды', al:['мифология','mythology','мифы','легенды','библия','эпос']}
+];
 var PHASES = ['curse','counter','debate','judging','verdict'];
 var PHASE_LABEL = {curse:'Проклятие', counter:'Контерпик', debate:'Прения', judging:'Суд', verdict:'Вердикт'};
 var PHASE_SEC = {curse:120, counter:180, debate:90, judging:0, verdict:0};
@@ -149,8 +228,10 @@ var S = {
   view:'lobby', code:null, match:null, matchState:'idle', unsubMatch:null,
   recent:[], mine:[], lobbyLoaded:false, lobbySlow:false, lobbyErr:null,
   peers:[], lastReact:0, nameSync:false, player:null, playerErr:null,
-  ui:{ newJudge: lsGet('sp-newJudge') === 'human' ? 'human' : 'ai', newFormat:6, appeal:false }
+  ui:{ newJudge: ['human','jury'].indexOf(lsGet('sp-newJudge')) >= 0 ? lsGet('sp-newJudge') : 'ai', newMode: lsGet('sp-newMode') === 'carousel' ? 'carousel' : 'duel',
+    newFormat:{duel:6, carousel:1}, newMods:loadMods(), appeal:false }
 };
+function loadMods(){ var o = {vow:false, scorch:false, lot:false}; try{ var d = JSON.parse(lsGet('sp-newMods') || '{}'); MOD_KEYS.forEach(function(k){ o[k] = !!d[k]; }); }catch(e){} return o; }
 function canAct(){ return !!(S.db && S.me); }
 function noWriteMsg(){
   if(!S.db || S.dbState === 'none') return 'Нет связи с базой игры. Проверь интернет и обнови страницу.';
@@ -158,50 +239,107 @@ function noWriteMsg(){
 }
 
 /* ---------- match model ---------- */
-function blankRound(n, curser){
+function blankRound(n, curser, def){
   return {
-    n:n, curser:curser, phase:'curse', phaseAt:now(),
+    n:n, curser:curser, def:def, phase:'curse', phaseAt:now(),
     curse:{name:'', trig:'', eff:'', scale:'', trap:''},
     qa:{q1:{q:'', a:''}, q2:{q:'', a:''}},
     counter:{who:'', how:'', work:'', where:''},
     debate:{cur:'', def:'', curDone:false, defDone:false},
-    appeal:null, prev:null, verdict:null
+    votes:{}, lot:null, appeal:null, prev:null, verdict:null
   };
 }
 function normM(d){
   if(!d) return null;
   var m = Object.assign({}, d);
   m.code = String(d.code || '');
-  m.seats = Object.assign({a:null, b:null, j:null}, d.seats || {});
-  m.tokens = Object.assign({a:true, b:true}, d.tokens || {});
+  m.mode = d.mode === 'carousel' ? 'carousel' : 'duel';
+  var ps = PSEATS[m.mode], seats = {};
+  ALLSEATS.forEach(function(s){ seats[s] = null; });
+  m.seats = Object.assign(seats, d.seats || {});
+  m.tokens = Object.assign({}, d.tokens || {});
   m.names = Object.assign({}, d.names || {});
   m.history = Array.isArray(d.history) ? d.history : [];
   m.members = Array.isArray(d.members) ? d.members : [];
-  m.format = [4,6,10].indexOf(+d.format) >= 0 ? +d.format : 6;
-  m.judgeType = d.judgeType === 'human' ? 'human' : 'ai';
+  m.format = FORMATS[m.mode].indexOf(+d.format) >= 0 ? +d.format : (m.mode === 'carousel' ? 1 : 6);
+  m.judgeType = ['human','jury'].indexOf(d.judgeType) >= 0 ? d.judgeType : 'ai';
+  m.mods = {vow:!!(d.mods && d.mods.vow), scorch:!!(d.mods && d.mods.scorch), lot:!!(d.mods && d.mods.lot)};
+  m.vows = Object.assign({}, d.vows || {});
   m.status = ['lobby','playing','finished'].indexOf(d.status) >= 0 ? d.status : 'lobby';
+  m.order = Array.isArray(d.order) ? d.order.filter(function(s, i, a){ return ps.indexOf(s) >= 0 && a.indexOf(s) === i; }) : null;
   if(d.round && typeof d.round === 'object'){
     var r = Object.assign({}, d.round), qa = r.qa || {};
     r.curse = Object.assign({name:'', trig:'', eff:'', scale:'', trap:''}, r.curse || {});
     r.qa = {q1:Object.assign({q:'', a:''}, qa.q1 || {}), q2:Object.assign({q:'', a:''}, qa.q2 || {})};
     r.counter = Object.assign({who:'', how:'', work:'', where:''}, r.counter || {});
     r.debate = Object.assign({cur:'', def:'', curDone:false, defDone:false}, r.debate || {});
-    r.curser = r.curser === 'b' ? 'b' : 'a';
+    r.votes = r.votes && typeof r.votes === 'object' ? r.votes : {};
+    r.lot = Array.isArray(r.lot) ? r.lot.filter(function(id){ return VERSE_BY[id]; }) : null;
+    r.curser = ps.indexOf(r.curser) >= 0 ? r.curser : 'a';
+    if(ps.indexOf(r.def) < 0 || r.def === r.curser) r.def = m.mode === 'duel' ? OTHER[r.curser] : (m.order && m.order.length > 1 ? m.order[(m.order.indexOf(r.curser) + 1) % m.order.length] : 'b');
     if(PHASES.indexOf(r.phase) < 0) r.phase = 'curse';
     m.round = r;
+    // старые дуэли без порядка: восстанавливаем его по номеру дела
+    if(m.mode === 'duel' && (!m.order || m.order.length !== 2)) m.order = r.n % 2 ? [r.curser, r.def] : [r.def, r.curser];
   } else { m.round = null; }
-  if(m.status === 'playing' && !m.round) m.status = 'lobby';
+  if(m.status === 'playing' && (!m.round || !m.order || m.order.length < 2)) m.status = 'lobby';
+  (m.order || ps).forEach(function(s){ if(m.tokens[s] === undefined) m.tokens[s] = true; });
   return m;
 }
 function mySeat(m){
   if(!S.me || !m) return null;
-  var ks = ['a','b','j'];
-  for(var i = 0; i < ks.length; i++) if(m.seats[ks[i]] === S.me) return ks[i];
+  for(var i = 0; i < ALLSEATS.length; i++) if(m.seats[ALLSEATS[i]] === S.me) return ALLSEATS[i];
   return null;
 }
-function scores(hist){ var s = {a:0, b:0}; (hist || []).forEach(function(h){ if(h && h.pts){ s.a += +h.pts.a || 0; s.b += +h.pts.b || 0; } }); return s; }
-function pointsFor(code, eleg, curser){
-  var p = {a:0, b:0}, def = OTHER[curser], V = VERDICTS[code] || VERDICTS.proval;
+function pSeats(m){ return PSEATS[m.mode]; }
+function isPlayer(m, s){ return pSeats(m).indexOf(s) >= 0; }
+function seatedPlayers(m){ return pSeats(m).filter(function(s){ return m.seats[s]; }); }
+function inPlay(m){ return m.order && m.order.length ? m.order : (m.mode === 'duel' ? ['a','b'] : seatedPlayers(m)); }
+function minPlayers(m){ return m.mode === 'carousel' ? 3 : 2; }
+function jurors(m){
+  if(m.judgeType !== 'jury') return [];
+  if(m.mode === 'carousel'){ var r = m.round; return (m.order || []).filter(function(s){ return m.seats[s] && (!r || (s !== r.curser && s !== r.def)); }); }
+  return KSEATS.filter(function(s){ return m.seats[s]; });
+}
+function roleOf(m, seat){
+  var r = m.round;
+  if(!seat) return 'spec';
+  if(seat === 'j') return 'judge';
+  if(r && seat === r.curser) return 'cur';
+  if(r && seat === r.def) return 'def';
+  if(KSEATS.indexOf(seat) >= 0 || jurors(m).indexOf(seat) >= 0) return 'juror';
+  return isPlayer(m, seat) ? 'wait' : 'spec';
+}
+function seatLabel(m, s){
+  if(s === 'j') return 'Судья';
+  if(KSEATS.indexOf(s) >= 0) return 'Присяжный ' + s.slice(1);
+  return m.mode === 'carousel' ? 'Игрок ' + SEATL[s] : 'Сторона ' + SEATL[s];
+}
+function caseSeats(order, n){
+  var N = order.length, i = (n - 1) % N, lap = Math.floor((n - 1) / N), off = N > 2 ? 1 + (lap % (N - 1)) : 1;
+  return {cur:order[i], def:order[(i + off) % N]};
+}
+function totalCases(m){ return m.mode === 'carousel' ? m.format * Math.max(1, inPlay(m).length) : m.format; }
+function fmtLabel(m){ return m.mode === 'carousel' ? m.format + ' ' + plural(m.format, 'круг', 'круга', 'кругов') : m.format + ' дел'; }
+function scores(hist, m){
+  var s = {};
+  (m ? inPlay(m) : ['a','b']).forEach(function(k){ s[k] = 0; });
+  (hist || []).forEach(function(h){ if(h && h.pts) Object.keys(h.pts).forEach(function(k){ s[k] = (s[k] || 0) + (+h.pts[k] || 0); }); });
+  return s;
+}
+function leaders(sc, seats){
+  var mx = -1e9, out = [];
+  seats.forEach(function(s){ var v = sc[s] || 0; if(v > mx){ mx = v; out = [s]; } else if(v === mx) out.push(s); });
+  return out;
+}
+function finishedBy(m, hist){
+  var len = hist.length, sc = scores(hist, m);
+  if(m.mode === 'carousel'){ var N = inPlay(m).length || 1; return len >= m.format * N && len % N === 0 && leaders(sc, inPlay(m)).length === 1; }
+  return len >= m.format && len % 2 === 0 && sc.a !== sc.b;
+}
+function pointsFor(code, eleg, curser, def){
+  var p = {}, V = VERDICTS[code] || VERDICTS.proval;
+  p[curser] = 0; p[def] = 0;
   p[V.who === 'def' ? def : curser] += V.pts;
   if(eleg === 'def') p[def] += 1;
   if(eleg === 'cur') p[curser] += 1;
@@ -229,11 +367,10 @@ function burnedHits(text, hist){
 }
 function willFinish(m){
   var r = m.round; if(!r || !r.verdict) return false;
-  var len = m.history.length + 1, sc = scores(m.history), p = pointsFor(r.verdict.code, r.verdict.eleg, r.curser);
-  return len >= m.format && len % 2 === 0 && (sc.a + p.a) !== (sc.b + p.b);
+  return finishedBy(m, m.history.concat([{pts:pointsFor(r.verdict.code, r.verdict.eleg, r.curser, r.def)}]));
 }
 function actorInfo(m){
-  var r = m.round, cur = r.curser, def = OTHER[cur];
+  var r = m.round, cur = r.curser, def = r.def;
   switch(r.phase){
     case 'curse': return {seat:cur, text:'готовит проклятие', mine:'наложи проклятие', icon:'zap', label:'Обвинения'};
     case 'counter': return {seat:def, text:'ищет контерпик', mine:'сними проклятие контерпиком', icon:'shield', label:'Защиты'};
@@ -243,10 +380,73 @@ function actorInfo(m){
         : {seat:cur, text:'ищет дыру в контерпике', mine:'возрази или прими контерпик', icon:'message', label:'Обвинения'};
     case 'judging':
       if(m.judgeType === 'human') return {seat:'j', text:'изучает дело', mine:'вынеси вердикт', icon:'gavel', label:'судьи'};
+      if(m.judgeType === 'jury'){
+        var js = jurors(m), nv = js.filter(function(s){ return r.votes[s]; }).length;
+        return {seat:null, jury:true, text:js.length ? 'Присяжные совещаются: ' + nv + ' из ' + js.length : 'Ждём присяжных', icon:'users'};
+      }
       return {seat:null, text:'Игроки спрашивают ИИ-судью по промту', icon:'gavel'};
     case 'verdict': return {seat:null, text:'Вердикт оглашён', icon:'scroll'};
   }
   return {seat:null, text:'', icon:'gavel'};
+}
+
+/* ---------- вселенные и модификаторы ---------- */
+var VERSE_BY = {};
+VERSES.forEach(function(v){ VERSE_BY[v.id] = v; v.nal = v.al.map(norm).filter(Boolean); });
+function verseOf(text){
+  var t = ' ' + norm(text) + ' ';
+  if(!t.trim()) return null;
+  for(var i = 0; i < VERSES.length; i++){
+    var v = VERSES[i];
+    for(var j = 0; j < v.nal.length; j++){ var a = v.nal[j]; if(a.length >= 5 ? t.indexOf(a) >= 0 : t.indexOf(' ' + a + ' ') >= 0) return v.id; }
+  }
+  return null;
+}
+function verseKey(text){ var id = verseOf(text); if(id) return id; var n = norm(text); return n ? 'w:' + n : null; }
+function verseName(id){ return VERSE_BY[id] ? VERSE_BY[id].name : String(id || ''); }
+function hashStr(s){ var h = 2166136261; for(var i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function seeded(seed){
+  var a = seed >>> 0;
+  return function(){ a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function pickN(list, n, rnd){
+  var a = list.slice();
+  for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(rnd() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a.slice(0, n);
+}
+function shuffle(list){ return pickN(list, list.length, Math.random); }
+/* три вселенные на выбор для обета: одни и те же для места в этом матче, новый матч - новые */
+function vowOffers(m, seat){ return pickN(VERSES.map(function(v){ return v.id; }), 3, seeded(hashStr(m.code + ':' + (m.matchNo || 1) + ':' + seat))); }
+function vowOf(m, seat){ return m.mods.vow && m.vows[seat] && VERSE_BY[m.vows[seat]] ? m.vows[seat] : null; }
+/* выжженные вселенные: всё, откуда уже брали контерпик */
+function scorched(hist){
+  var out = [], seen = {};
+  (hist || []).forEach(function(h){
+    var k = verseKey(h.work); if(!k || seen[k]) return;
+    seen[k] = 1; out.push({key:k, name:VERSE_BY[k] ? VERSE_BY[k].name : String(h.work).trim(), n:h.n});
+  });
+  return out;
+}
+function lotFor(m, def, hist){
+  var ban = {}, v = vowOf(m, def);
+  if(v) ban[v] = 1;
+  if(m.mods.scorch) scorched(hist).forEach(function(x){ ban[x.key] = 1; });
+  return pickN(VERSES.map(function(x){ return x.id; }).filter(function(id){ return !ban[id]; }), 3, Math.random);
+}
+function newRound(m, n, hist){
+  var cs = caseSeats(m.order, n), r = blankRound(n, cs.cur, cs.def);
+  if(m.mods.lot) r.lot = lotFor(m, cs.def, hist || m.history);
+  return r;
+}
+/* что не так с вселенной контерпика: обет, выжженная земля, жребий */
+function verseProblems(m, work){
+  var r = m.round, out = [], k = verseKey(work);
+  if(!k) return out;
+  var v = vowOf(m, r.def);
+  if(v && k === v) out.push('Это вселенная из твоего обета: ' + verseName(v) + '. Нарушишь обет - фол Защиты.');
+  if(m.mods.scorch){ var hit = scorched(m.history).filter(function(x){ return x.key === k; })[0]; if(hit) out.push(hit.name + ' уже выжжена (дело ' + pad(hit.n) + '). Контерпик оттуда - фол Защиты.'); }
+  if(m.mods.lot && r.lot && r.lot.length && r.lot.indexOf(k) < 0) out.push('Этой вселенной нет в жребии. Снимать можно только из: ' + r.lot.map(verseName).join(', ') + '.');
+  return out;
 }
 
 /* ---------- people ---------- */
@@ -399,12 +599,14 @@ function judgeCore(m){
   L.push('2. Закон Источника. Контерпик засчитывается только с источником: произведение, кто или что, где это показано. Считаются только канон и официальные материалы, без фанатских теорий, хэдканонов и модов. Перепутанное имя прощается, если способность реальна и понятно, о ком речь. Выдуманная или приукрашенная способность - фол. Если место в каноне не указано и ты не можешь подтвердить его сам, снизь вердикт на ступень.');
   L.push('3. Закон Проклятия. Проклятие = триггер + эффект + масштаб. Один подвох может закрыть один класс контров, но не все. После оглашения проклятие не меняется. Правка задним числом или проклятие, которое нельзя снять даже в теории, - фол Обвинения. Ответы Обвинения на уточнения - часть проклятия.');
   L.push('4. Сожжённые карты. Персонажа, стенд или концепт, уже сыгранный в этом матче, повторять нельзя. Уже сгорели: ' + (burned.length ? burned.join(', ') : 'пока ничего') + '.');
+  var mods = modRules(m);
+  if(mods.length){ L.push('5. Модификаторы этого матча:'); mods.forEach(function(x){ L.push('- ' + x); }); }
   L.push('');
   L.push('ВЕРДИКТЫ');
   L.push('- СНЯТИЕ: проклятие снято или обезврежено по сути. Защита +2.');
   L.push('- ОБХОД: проклятие остаётся, но с ним можно жить. Защита +1.');
   L.push('- ПРОВАЛ: контерпик не работает. Обвинение +1.');
-  L.push('- ФОЛ ЗАЩИТЫ: нарушены пункты 1, 2 или 4. Обвинение +2.');
+  L.push('- ФОЛ ЗАЩИТЫ: нарушены пункты 1, 2 или 4' + (mods.length ? ', или контерпик нарушает модификатор из пункта 5' : '') + '. Обвинение +2.');
   L.push('- ФОЛ ОБВИНЕНИЯ: нарушен пункт 3. Защита +2.');
   L.push('- ИЗЯЩЕСТВО: по желанию +1 одной стороне за особенно красивый ход.');
   L.push('');
@@ -439,12 +641,19 @@ function judgeCore(m){
   }
   return L;
 }
+function modRules(m){
+  var r = m.round, out = [];
+  if(m.mods.vow){ var v = vowOf(m, r.def); out.push('Связывающий обет: Защита отказалась от вселенной ' + (v ? '«' + verseName(v) + '»' : '(обет не дан)') + '. Контерпик из неё - фол Защиты.'); }
+  if(m.mods.scorch){ var sc = scorched(m.history).map(function(x){ return x.name; }); out.push('Выжженная земля: вселенная, из которой уже брали контерпик в этом матче, сгорела для всех. Выжжены: ' + (sc.length ? sc.join(', ') : 'пока ничего') + '. Контерпик из выжженной вселенной - фол Защиты.'); }
+  if(m.mods.lot && r.lot && r.lot.length) out.push('Жребий вселенных: в этом деле Защита снимает только из ' + r.lot.map(verseName).join(', ') + '. Контерпик из другой вселенной - фол Защиты.');
+  return out;
+}
 function promptText(m){
   return judgeCore(m).concat([
     '',
     'КАК ОТВЕЧАТЬ - по-русски, коротко, строго в этом порядке, дело целиком не пересказывай:',
     '1. Источник: канон это или нет. Если не уверен в деталях произведения, прямо скажи, что нужно проверить, и не выдумывай факты.',
-    '2. Правила: есть ли кинжальчик, отмычка, сожжённая карта или правка задним числом.',
+    '2. Правила: есть ли кинжальчик, отмычка, сожжённая карта, нарушение модификатора или правка задним числом.',
     '3. Механика: 2-4 предложения, почему контерпик работает или нет против триггера, эффекта и подвоха.',
     '4. Вердикт: СНЯТИЕ, ОБХОД, ПРОВАЛ, ФОЛ ЗАЩИТЫ или ФОЛ ОБВИНЕНИЯ.',
     '5. Изящество: нет, Защите или Обвинению, и за что.',
@@ -465,10 +674,11 @@ async function createTable(){
     code = genCode();
   }
   var t = now(), names = {}; names[S.me] = S.nick;
+  var mode = S.ui.newMode;
   await setDoc(doc(S.db, 'matches', code), {
-    v:3, code:code, createdAt:t, updatedAt:t, createdBy:S.me, status:'lobby',
-    judgeType:S.ui.newJudge, format:S.ui.newFormat, members:[S.me], names:names,
-    seats:{a:S.me, b:null, j:null}, tokens:{a:true, b:true}, round:null, history:[], matchNo:1
+    v:4, code:code, createdAt:t, updatedAt:t, createdBy:S.me, status:'lobby', mode:mode,
+    judgeType:S.ui.newJudge, format:S.ui.newFormat[mode], mods:Object.assign({}, S.ui.newMods), vows:{}, members:[S.me], names:names,
+    seats:{a:S.me}, tokens:{}, order:null, round:null, history:[], matchNo:1
   });
   location.hash = 't-' + code;
 }
@@ -480,7 +690,7 @@ async function claimSeat(seat){
     if(!snap.exists()) throw {toast:'Стол уже закрыт'};
     var m = normM(snap.data());
     if(m.seats[seat]) throw {toast: m.seats[seat] === me ? 'Ты уже на этом месте' : 'Место только что заняли'};
-    if(seat === 'j' && m.judgeType !== 'human') throw {toast:'За этим столом судит ИИ по промту'};
+    if(!seatAllowed(m, seat)) throw {toast:'Это место сейчас недоступно'};
     var old = mySeat(m), patch = {updatedAt:now()};
     patch['seats.' + seat] = me;
     if(old) patch['seats.' + old] = null;
@@ -488,19 +698,52 @@ async function claimSeat(seat){
     if(m.members.indexOf(me) < 0) patch.members = m.members.concat([me]);
     tx.update(ref, patch);
   });
-  toast(seat === 'j' ? 'Ты судья. Мантия выдана' : 'Ты за столом');
+  toast(seat === 'j' ? 'Ты судья. Мантия выдана' : KSEATS.indexOf(seat) >= 0 ? 'Ты присяжный. Голосуй честно' : 'Ты за столом');
+}
+function seatAllowed(m, seat){
+  if(seat === 'j') return m.judgeType === 'human';
+  if(KSEATS.indexOf(seat) >= 0) return m.mode === 'duel' && m.judgeType === 'jury';
+  if(!isPlayer(m, seat)) return false;
+  if(m.status !== 'lobby') return (m.order || []).indexOf(seat) >= 0;
+  return true;
 }
 function standUp(){ var m = S.match, s = mySeat(m); if(!s) return; var p = {}; p['seats.' + s] = null; return upd(p); }
+function startPatch(m){
+  var ps = seatedPlayers(m);
+  if(ps.length < minPlayers(m)) throw {toast: m.mode === 'carousel' ? 'Для карусели нужно хотя бы 3 игрока' : 'Нужны обе стороны'};
+  if(m.mods.vow){
+    var miss = ps.filter(function(s){ return !m.vows[s] || vowOffers(m, s).indexOf(m.vows[s]) < 0; });
+    if(miss.length) throw {toast:'Обет ещё не дали: ' + miss.map(function(s){ return nm(m.seats[s], m); }).join(', ')};
+  }
+  var order = shuffle(ps), tokens = {};
+  order.forEach(function(s){ tokens[s] = true; });
+  var mm = Object.assign({}, m, {order:order});
+  return {status:'playing', order:order, tokens:tokens, history:[], round:newRound(mm, 1, [])};
+}
 function startMatch(){
   var m = S.match;
   if(!m || m.status !== 'lobby') return;
-  if(!m.seats.a || !m.seats.b) throw {toast:'Нужны обе стороны'};
-  return upd({status:'playing', round:blankRound(1, Math.random() < .5 ? 'a' : 'b')});
+  return upd(startPatch(m));
 }
 function setJudgeType(v){
   var m = S.match; if(!m || m.judgeType === v) return;
-  var patch = {judgeType:v}; if(v === 'ai') patch['seats.j'] = null;
-  return upd(patch).then(function(){ toast(v === 'ai' ? 'Теперь судит ИИ по промту' : 'Теперь нужен судья-человек'); });
+  var patch = {judgeType:v};
+  if(v !== 'human') patch['seats.j'] = null;
+  if(v !== 'jury') KSEATS.forEach(function(s){ patch['seats.' + s] = null; });
+  if(m.round && m.round.phase === 'judging') patch['round.votes'] = {};
+  return upd(patch).then(function(){ toast({ai:'Теперь судит ИИ по промту', human:'Теперь нужен судья-человек', jury:'Теперь судят присяжные'}[v]); });
+}
+function setMod(k){
+  var m = S.match; if(!m || m.status !== 'lobby' || !MODS[k]) return;
+  var p = {}; p['mods.' + k] = !m.mods[k];
+  return upd(p).then(function(){ toast(MODS[k].name + (m.mods[k] ? ' выключен' : ' включён')); });
+}
+function pickVow(id){
+  var m = S.match, seat = mySeat(m);
+  if(!m || m.status !== 'lobby' || !isPlayer(m, seat)) throw {toast:'Обет дают игроки за столом'};
+  if(vowOffers(m, seat).indexOf(id) < 0) throw {toast:'Этой вселенной нет среди твоих вариантов'};
+  var p = {}; p['vows.' + seat] = id;
+  return upd(p).then(function(){ toast('Обет дан: без «' + verseName(id) + '» до конца матча'); });
 }
 function val(id){ var el = $(id); return el ? el.value.trim() : ''; }
 function clearDrafts(fs){ fs.forEach(function(f){ draftSet(f, ''); }); }
@@ -527,7 +770,7 @@ function fillDeck(){
 function askQ(){
   var text = val('f-q'); if(!text){ showErr('f-q-err', true); $('f-q').focus(); return; }
   var m = S.match, r = m.round;
-  if(r.phase !== 'counter' || mySeat(m) !== OTHER[r.curser]) throw {toast:'Сейчас вопросы задать нельзя'};
+  if(r.phase !== 'counter' || mySeat(m) !== r.def) throw {toast:'Сейчас вопросы задать нельзя'};
   var k = !r.qa.q1.q ? 'q1' : (!r.qa.q2.q ? 'q2' : null);
   if(!k) throw {toast:'Оба вопроса уже заданы'};
   var p = {}; p['round.qa.' + k] = {q:clip(text, 300), a:''};
@@ -544,8 +787,11 @@ function answerQ(b){
 function submitCounter(b){
   var blk = b.closest('[data-b]'); if(!validate(blk)) return;
   var m = S.match, r = m.round;
-  if(r.phase !== 'counter' || mySeat(m) !== OTHER[r.curser]) throw {toast:'Сейчас не твой ход'};
-  var k = {who:clip(val('f-k-who'), 120), how:clip(val('f-k-how'), 800), work:clip(val('f-k-work'), 160), where:clip(val('f-k-where'), 200)};
+  if(r.phase !== 'counter' || mySeat(m) !== r.def) throw {toast:'Сейчас не твой ход'};
+  var work = m.mods.lot && r.lot && r.lot.length ? (blk.querySelector('input[name="f-k-lot"]:checked') || {}).value : val('f-k-work');
+  if(m.mods.lot && r.lot && r.lot.length && !work){ showErr('f-k-lot-err', true); return; }
+  if(VERSE_BY[work]) work = VERSE_BY[work].name;
+  var k = {who:clip(val('f-k-who'), 120), how:clip(val('f-k-how'), 800), work:clip(work, 160), where:clip(val('f-k-where'), 200)};
   return upd({'round.counter':k, 'round.phase':'debate', 'round.phaseAt':now()}).then(function(){ clearDrafts(['k.who','k.how','k.work','k.where']); });
 }
 function debate(b, say){
@@ -559,7 +805,7 @@ function debate(b, say){
       : upd({'round.debate':{cur:'', def:'', curDone:true, defDone:true}, 'round.phase':'judging', 'round.phaseAt':now()});
     return p.then(function(){ clearDrafts(['d.cur']); });
   }
-  if(!isCur && seat === OTHER[r.curser] && r.debate.curDone && !r.debate.defDone){
+  if(!isCur && seat === r.def && r.debate.curDone && !r.debate.defDone){
     return upd({'round.debate.def':text, 'round.debate.defDone':true, 'round.phase':'judging', 'round.phaseAt':now()}).then(function(){ clearDrafts(['d.def']); });
   }
   throw {toast:'Сейчас не твоя реплика'};
@@ -581,13 +827,14 @@ async function nextRound(){
     if(!snap.exists()) throw {toast:'Стол закрыт'};
     var m = normM(snap.data()), r = m.round;
     if(!r || r.phase !== 'verdict' || r.n !== n0 || !r.verdict || m.status !== 'playing') return;
-    var v = r.verdict, p = pointsFor(v.code, v.eleg, r.curser);
-    var entry = {n:r.n, curser:r.curser, curse:clip(r.curse.name || r.curse.eff, 80), counter:r.counter.who, work:r.counter.work,
-      verdict:v.code, eleg:v.eleg || 'none', note:clip(v.quip || v.note, 240), pts:p, judge:v.by || 'ai-prompt', appealed:!!r.appeal};
-    var history = m.history.concat([entry]), sc = scores(history);
+    var v = r.verdict, p = pointsFor(v.code, v.eleg, r.curser, r.def);
+    var entry = {n:r.n, curser:r.curser, def:r.def, curse:clip(r.curse.name || r.curse.eff, 80), counter:r.counter.who, work:r.counter.work,
+      verdict:v.code, eleg:v.eleg || 'none', note:clip(v.quip || v.note, 240), pts:p, judge:v.by || 'ai-prompt', appealed:!!r.appeal,
+      voters:Array.isArray(v.voters) ? v.voters : []};
+    var history = m.history.concat([entry]);
     var patch = {history:history, updatedAt:now()};
-    if(history.length >= m.format && history.length % 2 === 0 && sc.a !== sc.b) patch.status = 'finished';
-    else patch.round = blankRound(r.n + 1, OTHER[r.curser]);
+    if(finishedBy(m, history)) patch.status = 'finished';
+    else patch.round = newRound(m, r.n + 1, history);
     tx.update(ref, patch);
   });
 }
@@ -595,14 +842,67 @@ function fileAppeal(){
   var text = clip(val('f-ap'), 800);
   if(!text){ showErr('f-ap-err', true); $('f-ap').focus(); return; }
   var m = S.match, r = m.round, seat = mySeat(m);
-  if(r.phase !== 'verdict' || r.appeal || !(seat === 'a' || seat === 'b') || !m.tokens[seat]) throw {toast:'Апелляцию сейчас подать нельзя'};
-  var p = {'round.appeal':{side:seat, text:text}, 'round.prev':r.verdict, 'round.verdict':null, 'round.phase':'judging', 'round.phaseAt':now()};
+  if(r.phase !== 'verdict' || r.appeal || !(seat === r.curser || seat === r.def) || !m.tokens[seat]) throw {toast:'Апелляцию сейчас подать нельзя'};
+  var p = {'round.appeal':{side:seat, text:text}, 'round.prev':r.verdict, 'round.verdict':null, 'round.votes':{}, 'round.phase':'judging', 'round.phaseAt':now()};
   p['tokens.' + seat] = false;
   return upd(p).then(function(){ S.ui.appeal = false; clearDrafts(['ap']); });
 }
 function rematch(){
   var m = S.match; if(!m || m.status !== 'finished') return;
-  return upd({status:'playing', history:[], tokens:{a:true, b:true}, round:blankRound(1, Math.random() < .5 ? 'a' : 'b'), matchNo:(m.matchNo || 1) + 1});
+  var no = (m.matchNo || 1) + 1;
+  // с обетом - назад в сбор: в новом матче новые вселенные на выбор
+  if(m.mods.vow) return upd({status:'lobby', history:[], round:null, order:null, vows:{}, matchNo:no});
+  var patch = startPatch(Object.assign({}, m, {matchNo:no}));
+  patch.matchNo = no; patch.vows = {};
+  return upd(patch);
+}
+
+/* ---------- присяжные ---------- */
+function tallyVotes(m, votes, seats){
+  var list = seats.filter(function(s){ return votes[s] && VERDICTS[votes[s].code]; }).map(function(s){ return {seat:s, v:votes[s]}; })
+    .sort(function(a, b){ return (a.v.at || 0) - (b.v.at || 0); });
+  var cnt = {}, best = null, el = {def:0, cur:0};
+  list.forEach(function(x){ cnt[x.v.code] = (cnt[x.v.code] || 0) + 1; });
+  // больше голосов - побеждает; при равенстве - печать, которую подняли раньше
+  list.forEach(function(x){ if(!best || cnt[x.v.code] > cnt[best]) best = x.v.code; });
+  list.forEach(function(x){ if(x.v.eleg === 'def' || x.v.eleg === 'cur') el[x.v.eleg]++; });
+  var eleg = el.def * 2 > list.length ? 'def' : el.cur * 2 > list.length ? 'cur' : 'none';
+  var quip = (list.filter(function(x){ return x.v.code === best && x.v.note; })[0] || {v:{}}).v.note || '';
+  var why = list.map(function(x){ var t = x.v.why || x.v.note; return nm(m.seats[x.seat], m) + ': ' + VERDICTS[x.v.code].label + (t ? ' - ' + t : ''); }).join('\n');
+  return {code:best || 'proval', eleg:eleg, note:quip, quip:quip, why:clip(why, 1500), by:'jury', at:now(),
+    votes:list.map(function(x){ return {seat:x.seat, code:x.v.code}; }), voters:list.map(function(x){ return x.seat; }), tally:(cnt[best] || 0) + '/' + list.length};
+}
+async function castVote(b){
+  var blk = b.closest('[data-b]'), sel = blk.querySelector('input[name="vf-jury"]:checked');
+  if(!sel){ var er = $('vf-jury-err'); if(er) er.hidden = false; var f = blk.querySelector('input[name="vf-jury"]'); if(f) f.focus(); return; }
+  var vote = {code:sel.value, eleg:($('vf-jury-el') || {}).value || 'none', note:clip(val('vf-jury-note'), 200), why:clip(val('vf-jury-why'), 400), at:now()};
+  var ref = mref(), seat = mySeat(S.match), n0 = S.match.round.n, closed = false;
+  await runTransaction(S.db, async function(tx){
+    var snap = await tx.get(ref);
+    if(!snap.exists()) throw {toast:'Стол закрыт'};
+    var m = normM(snap.data()), r = m.round;
+    if(!r || r.n !== n0 || r.phase !== 'judging' || m.judgeType !== 'jury') throw {toast:'Голосование уже закрыто'};
+    var js = jurors(m);
+    if(js.indexOf(seat) < 0) throw {toast:'Ты не присяжный в этом деле'};
+    var votes = Object.assign({}, r.votes); votes[seat] = vote;
+    var patch = {updatedAt:now()}; patch['round.votes.' + seat] = vote;
+    if(js.every(function(s){ return votes[s]; })){ patch['round.verdict'] = tallyVotes(m, votes, js); patch['round.phase'] = 'verdict'; patch['round.phaseAt'] = now(); closed = true; }
+    tx.update(ref, patch);
+  });
+  clearDrafts(['v.note','v.why']);
+  toast(closed ? 'Голоса подсчитаны - вердикт оглашён' : 'Голос принят. Ждём остальных присяжных');
+}
+async function closeVoting(){
+  var ref = mref(), n0 = S.match.round.n;
+  await runTransaction(S.db, async function(tx){
+    var snap = await tx.get(ref);
+    if(!snap.exists()) throw {toast:'Стол закрыт'};
+    var m = normM(snap.data()), r = m.round;
+    if(!r || r.n !== n0 || r.phase !== 'judging' || m.judgeType !== 'jury') return;
+    var js = jurors(m), cast = js.filter(function(s){ return r.votes[s]; });
+    if(!cast.length || cast.length * 2 < js.length) throw {toast:'Нужна хотя бы половина голосов'};
+    tx.update(ref, {'round.verdict':tallyVotes(m, r.votes, cast), 'round.phase':'verdict', 'round.phaseAt':now(), updatedAt:now()});
+  });
 }
 function closeTable(){ var ref = mref(); return write(function(){ return deleteDoc(ref); }).then(function(){ location.hash = 'lobby'; toast('Стол закрыт'); }); }
 
@@ -719,9 +1019,10 @@ function creditFrom(m){
     for(var i = cc.n; i < n; i++){
       var e = m.history[i] || {};
       if(seat === 'j') gain += e.judge === 'human' ? 1 : 0;
-      else gain += (e.pts && +e.pts[seat]) || 0;
+      gain += (e.pts && +e.pts[seat]) || 0;
+      if(Array.isArray(e.voters) && e.voters.indexOf(seat) >= 0) gain += 1;
     }
-    if(fin && !cc.fin && seat !== 'j'){ var sc = scores(m.history); gain += sc[seat] > sc[OTHER[seat]] ? 5 : 2; }
+    if(fin && !cc.fin && inPlay(m).indexOf(seat) >= 0){ var L = leaders(scores(m.history, m), inPlay(m)); gain += L.length === 1 && L[0] === seat ? 5 : 2; }
     var patch = {seals:Math.max(0, +p.seals || 0) + gain, updatedAt:now()};
     patch['credited.' + key] = {n:Math.max(cc.n, n), fin:!!(cc.fin || fin)};
     tx.update(playerRef(), patch);
@@ -795,7 +1096,7 @@ var prevM = null;
 function onMatch(m){
   var p = prevM;
   if(p && p.code === m.code){
-    if(p.status !== 'playing' && m.status === 'playing' && m.round) toast('Жребий брошен: первым проклинает ' + nm(m.seats[m.round.curser], m));
+    if(p.status !== 'playing' && m.status === 'playing' && m.round) toast('Жребий брошен: первым проклинает ' + nm(m.seats[m.round.curser], m) + (m.mode === 'carousel' ? ', дальше по кругу' : ''));
     if(p.status === 'playing' && m.status === 'finished') toast('Заседание закрыто. Итог в протоколе');
     var pr = p.round, r = m.round;
     if(!r || !pr || pr.n !== r.n || (p.matchNo || 1) !== (m.matchNo || 1)) S.ui.appeal = false;
@@ -854,17 +1155,34 @@ function subscribeLobby(){
 }
 
 /* ---------- render: lobby ---------- */
-function seatsFree(m){ return ['a','b'].concat(m.judgeType === 'human' ? ['j'] : []).filter(function(s){ return !m.seats[s]; }).length; }
+function seatsFree(m){
+  var free = pSeats(m).filter(function(s){ return !m.seats[s]; }).length;
+  if(m.judgeType === 'human' && !m.seats.j) free++;
+  return free;
+}
 function seatName(uid, m){ return uid ? esc(nm(uid, m)) : '<span class="muted">свободно</span>'; }
+function modsLine(m){ return MOD_KEYS.filter(function(k){ return m.mods[k]; }).map(function(k){ return MODS[k].short; }).join(', '); }
+function tableTitle(m){
+  if(m.mode === 'duel') return seatName(m.seats.a, m) + ' <span class="vs">vs</span> ' + seatName(m.seats.b, m);
+  var ps = seatedPlayers(m), names = ps.slice(0, 3).map(function(s){ return esc(nm(m.seats[s], m)); });
+  return '<span class="vs">карусель</span> ' + (names.length ? names.join(', ') : '<span class="muted">пока никого</span>') + (ps.length > 3 ? ' +' + (ps.length - 3) : '');
+}
+function scoreLine(m){
+  var sc = scores(m.history, m), v = (m.mode === 'duel' ? ['a','b'] : inPlay(m)).map(function(s){ return sc[s] || 0; });
+  if(m.mode === 'carousel') v.sort(function(a, b){ return b - a; });
+  return v.join(':');
+}
 function tableItem(m, kind){
-  var sc = scores(m.history), st = {lobby:'Сбор', playing:'Идёт', finished:'Закрыт'}[m.status];
-  var seat = mySeat(m), role = seat === 'j' ? 'ты судья' : seat ? 'ты за столом' : '';
-  var meta = '#' + m.code.toUpperCase() + ' · ' + (m.judgeType === 'ai' ? 'ИИ по промту' : 'судья-человек') + ' · ' + m.format + ' дел' + (role && kind === 'mine' ? ' · ' + role : '');
+  var st = {lobby:'Сбор', playing:'Идёт', finished:'Закрыт'}[m.status];
+  var seat = mySeat(m), role = seat === 'j' ? 'ты судья' : KSEATS.indexOf(seat) >= 0 ? 'ты присяжный' : seat ? 'ты за столом' : '';
+  var mods = modsLine(m);
+  var meta = '#' + m.code.toUpperCase() + ' · ' + (m.mode === 'carousel' ? 'карусель · ' : '') + JUDGE_LABEL[m.judgeType] + ' · ' + fmtLabel(m) + (mods ? ' · ' + mods : '') + (role && kind === 'mine' ? ' · ' + role : '');
   var side = kind === 'open'
     ? '<span class="pill pill-lobby">' + ic('users') + 'мест: ' + seatsFree(m) + '</span>'
-    : '<span class="pill pill-' + m.status + '">' + st + '</span>' + (m.status !== 'lobby' ? '<span class="t-score">' + sc.a + ':' + sc.b + '</span>' : '');
-  return '<li><a class="t-link" href="#t-' + esc(m.code) + '"><span class="t-av">' + avatar(m.seats.a, m) + avatar(m.seats.b, m) + '</span>' +
-    '<span class="t-main"><span class="t-title">' + seatName(m.seats.a, m) + ' <span class="vs">vs</span> ' + seatName(m.seats.b, m) + '</span><span class="t-meta">' + esc(meta) + '</span></span>' +
+    : '<span class="pill pill-' + m.status + '">' + st + '</span>' + (m.status !== 'lobby' ? '<span class="t-score">' + scoreLine(m) + '</span>' : '');
+  var avs = (m.mode === 'duel' ? ['a','b'] : seatedPlayers(m).slice(0, 3)).map(function(s){ return avatar(m.seats[s], m); }).join('') || avatar(null, m);
+  return '<li><a class="t-link" href="#t-' + esc(m.code) + '"><span class="t-av">' + avs + '</span>' +
+    '<span class="t-main"><span class="t-title">' + tableTitle(m) + '</span><span class="t-meta">' + esc(meta) + '</span></span>' +
     '<span class="t-side">' + side + '</span></a></li>';
 }
 function emptyLi(text){ return '<li class="empty">' + ic('scroll') + '<span>' + esc(text) + '</span></li>'; }
@@ -879,11 +1197,23 @@ function lobbyNote(){
   return '';
 }
 function renderLobby(){
+  var mode = S.ui.newMode;
+  qsa('[data-act="newMode"]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.v === mode)); });
   qsa('[data-act="newJudge"]').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.v === S.ui.newJudge)); });
-  qsa('[data-act="newFormat"]').forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.v === S.ui.newFormat)); });
+  qsa('[data-act="newMod"]').forEach(function(b){ b.setAttribute('aria-pressed', String(!!S.ui.newMods[b.dataset.v])); });
+  $('modeHint').textContent = mode === 'carousel'
+    ? 'От 3 до 6 игроков по кругу: каждый проклинает следующего и защищается от предыдущего.'
+    : 'Двое друг против друга, судит третий. Классика.';
   $('judgeHint').textContent = S.ui.newJudge === 'ai'
     ? 'Игроки копируют промт с делом в чат с ИИ и отмечают его вердикт. Бесплатно и без ключей.'
-    : 'Третий человек садится на место судьи и решает по Уложению.';
+    : S.ui.newJudge === 'human' ? 'Ещё один человек садится на место судьи и решает по Уложению.'
+    : mode === 'carousel' ? 'Судят игроки, которые не участвуют в деле. Решает большинство голосов.'
+    : 'До 4 зрителей садятся в присяжные и голосуют. Решает большинство.';
+  setHTML($('fmtSeg'), FORMATS[mode].map(function(f){
+    return '<button type="button" data-act="newFormat" data-v="' + f + '" aria-pressed="' + (S.ui.newFormat[mode] === f) + '">' + (mode === 'carousel' ? f + ' ' + plural(f, 'круг', 'круга', 'кругов') : f + ' ' + plural(f, 'дело', 'дела', 'дел')) + '</button>';
+  }).join(''));
+  $('lblFormat').textContent = mode === 'carousel' ? 'Сколько кругов' : 'Сколько дел';
+  $('fmtHint').textContent = mode === 'carousel' ? 'Круг - каждый игрок один раз проклинает и один раз защищается.' : '6 - стандарт: каждый проклинает трижды.';
   var ni = $('nickInput'); if(ni && document.activeElement !== ni && ni.value !== S.nick) ni.value = S.nick;
   var note = lobbyNote(), ln = $('lobbyNote');
   if(note){ setHTML(ln, ic('alert') + '<span>' + esc(note) + '</span>'); ln.hidden = false; } else ln.hidden = true;
@@ -909,7 +1239,6 @@ function renderLobby(){
   $('liveWrap').hidden = !live.length;
   setHTML($('liveList'), live.map(function(m){ return tableItem(m, 'live'); }).join(''));
 }
-
 /* ---------- render: table pieces ---------- */
 function stateCard(icon, title, text){
   return '<div class="wait" style="margin-top:24px">' + ic(icon, 'i-xl') + '<p class="wait-t">' + esc(title) + '</p><p class="hint">' + esc(text) + '</p><a class="btn" href="#lobby">' + ic('back') + 'В лобби</a></div>';
@@ -924,42 +1253,63 @@ function tableStateHTML(){
   return stateCard('alert', 'Не удалось открыть стол', 'Вернись в лобби и войди снова.');
 }
 function tableLink(m){ return location.origin + location.pathname + '#t-' + m.code; }
+function judgeIcon(t){ return t === 'ai' ? 'bot' : t === 'jury' ? 'users' : 'gavel'; }
 function barHTML(m){
   var ps = livePeers(), C = m.code.toUpperCase();
   return '<a class="icon-btn" href="#lobby" aria-label="Назад в лобби">' + ic('back') + '</a>' +
     '<div class="bar-title"><p class="bar-k">Стол</p><button class="code-chip" type="button" data-act="copyCode" aria-label="Скопировать код стола ' + C + '">' + C + ic('copy') + '</button></div>' +
-    '<span class="pill">' + (m.judgeType === 'ai' ? ic('bot') + 'ИИ по промту' : ic('gavel') + 'судья-человек') + '</span>' +
+    (m.mode === 'carousel' ? '<span class="pill">' + ic('repeat') + 'карусель</span>' : '') +
+    '<span class="pill">' + ic(judgeIcon(m.judgeType)) + JUDGE_LABEL[m.judgeType] + '</span>' +
     '<div class="peers" aria-label="В зале: ' + ps.length + '">' + ps.slice(0, 4).map(function(p){ return '<span class="av av-l" aria-hidden="true">' + esc(initial(p.nick || nm(p.uid))) + '</span>'; }).join('') +
     '<span class="peers-n">' + ic('eye') + 'в зале ' + pad(ps.length) + '</span></div>';
 }
 function benchHTML(m){
-  var r = m.round, playing = m.status === 'playing' && r, sc = scores(m.history), act = playing ? actorInfo(m).seat : null, can = canAct(), seated = mySeat(m);
-  function plate(s){
-    var uid = m.seats[s], me = uid && uid === S.me, role = playing ? (r.curser === s ? 'cur' : 'def') : null;
-    var st = '';
+  var r = m.round, playing = m.status === 'playing' && r, sc = scores(m.history, m), act = playing ? actorInfo(m).seat : null, can = canAct(), seated = mySeat(m);
+  function plate(s, side){
+    var uid = m.seats[s], me = uid && uid === S.me, role = playing ? roleOf(m, s) : null, st;
     if(uid){ var on = me || isOnline(uid), ty = !me && isTyping(uid); st = '<span class="dot' + (on ? ' on' : '') + '"></span>' + (ty ? 'печатает…' : on ? 'в зале' : 'не в сети'); }
     else st = 'ждём игрока';
-    var tok = m.tokens[s];
-    return '<div class="seat seat-' + s + (act === s ? ' is-turn' : '') + '">' +
-      '<div class="seat-who">' + avatar(uid, m) + '<div class="seat-id"><p class="seat-name">' + esc(uid ? nm(uid, m) : 'Свободно') + (me ? '<span class="you">ты</span>' : '') + '</p>' + (st ? '<p class="seat-st">' + st + '</p>' : '') + '</div></div>' +
-      '<div class="seat-score" aria-label="Очки: ' + sc[s] + '">' + pad(sc[s]) + '</div>' +
-      '<div class="seat-tags">' + (role ? '<span class="role role-' + role + '">' + (role === 'cur' ? 'Обвинение' : 'Защита') + '</span>' : '<span class="role">Сторона ' + (s === 'a' ? 'А' : 'Б') + '</span>') +
+    var tok = m.tokens[s], vw = vowOf(m, s);
+    var tag = role === 'cur' ? '<span class="role role-cur">Обвинение</span>' : role === 'def' ? '<span class="role role-def">Защита</span>'
+      : role === 'juror' ? '<span class="role role-jur">Присяжный</span>' : '<span class="role">' + (m.mode === 'carousel' ? (playing ? 'ждёт' : 'Игрок ' + SEATL[s]) : 'Сторона ' + SEATL[s]) + '</span>';
+    return '<div class="seat seat-' + side + (act === s ? ' is-turn' : '') + (role === 'wait' || role === 'juror' ? ' is-idle' : '') + '">' +
+      '<div class="seat-who">' + avatar(uid, m) + '<div class="seat-id"><p class="seat-name">' + esc(uid ? nm(uid, m) : 'Свободно') + (me ? '<span class="you">ты</span>' : '') + '</p><p class="seat-st">' + st + '</p></div></div>' +
+      '<div class="seat-score" aria-label="Очки: ' + (sc[s] || 0) + '">' + pad(sc[s] || 0) + '</div>' +
+      '<div class="seat-tags">' + tag +
       (m.status !== 'lobby' ? '<span class="tok' + (tok ? '' : ' spent') + '" title="' + (tok ? 'Апелляция есть' : 'Апелляция потрачена') + '">' + ic('scroll') + '<span class="sr-only">' + (tok ? 'Апелляция есть' : 'Апелляция потрачена') + '</span></span>' : '') +
-      (!uid && can && !seated ? '<button class="btn sm primary" type="button" data-act="sit" data-seat="' + s + '">Сесть</button>' : '') + '</div></div>';
+      (vw ? '<span class="vow-tag" title="Связывающий обет">' + ic('scroll') + 'без ' + esc(verseName(vw)) + '</span>' : '') +
+      (!uid && can && !seated && seatAllowed(m, s) ? '<button class="btn sm primary" type="button" data-act="sit" data-seat="' + s + '">Сесть</button>' : '') + '</div></div>';
+  }
+  var judge, js = playing ? jurors(m) : [];
+  if(m.judgeType === 'ai') judge = '<div class="judge-strip">' + aiAvatar() + '<span><b>ИИ-судья</b> · по промту: игроки спрашивают ИИ и отмечают его вердикт</span></div>';
+  else if(m.judgeType === 'human'){
+    var j = m.seats.j;
+    judge = '<div class="judge-strip' + (act === 'j' ? ' is-turn' : '') + '">' + avatar(j, m) + '<span><b>' + esc(j ? nm(j, m) : 'Судья') + '</b>' + (j && j === S.me ? '<span class="you">ты</span>' : '') +
+      (j ? ' · ' + (j === S.me || isOnline(j) ? 'в зале' : 'не в сети') : ' · место свободно') + '</span>' +
+      (!j && can && !seated ? '<button class="btn sm primary" type="button" data-act="sit" data-seat="j">' + ic('gavel') + 'Сесть судьёй</button>' : '') + '</div>';
+  } else {
+    var deciding = playing && r.phase === 'judging';
+    if(m.mode === 'carousel'){
+      judge = '<div class="judge-strip' + (deciding ? ' is-turn' : '') + '"><span class="av" aria-hidden="true">' + ic('users') + '</span><span><b>Присяжные</b> · ' +
+        (playing ? (js.length ? js.map(function(s){ return esc(nm(m.seats[s], m)); }).join(', ') : 'некому судить') : 'все игроки, кто не участвует в деле') + '</span></div>';
+    } else {
+      var ks = KSEATS.filter(function(k){ return m.seats[k]; }), freeK = KSEATS.filter(function(k){ return !m.seats[k]; })[0];
+      judge = '<div class="judge-strip' + (deciding ? ' is-turn' : '') + '"><span class="av" aria-hidden="true">' + ic('users') + '</span><span><b>Присяжные</b> · ' + ks.length + ' из 4' +
+        (ks.length ? ': ' + ks.map(function(k){ return esc(nm(m.seats[k], m)) + (m.seats[k] === S.me ? ' (ты)' : ''); }).join(', ') : '') + '</span>' +
+        (freeK && can && !seated ? '<button class="btn sm primary" type="button" data-act="sit" data-seat="' + freeK + '">' + ic('users') + 'В присяжные</button>' : '') + '</div>';
+    }
+  }
+  if(m.mode === 'carousel'){
+    var list = m.status === 'lobby' ? pSeats(m) : inPlay(m), N = Math.max(1, inPlay(m).length), lap = playing ? Math.floor((r.n - 1) / N) + 1 : 0;
+    var head = playing ? '<p class="mid-k">Дело <b>' + pad(r.n) + '</b>/' + pad(totalCases(m)) + ' · ' + (lap > m.format ? 'дополнительный круг' : 'круг ' + lap + '/' + m.format) + '</p>'
+      : m.status === 'finished' ? '<p class="mid-k">Итог · ' + m.history.length + ' дел</p>' : '<p class="mid-k">Сбор · игроков ' + seatedPlayers(m).length + ' из 6</p>';
+    return '<div class="ring-head">' + head + '</div><div class="ring">' + list.map(function(s){ return plate(s, 'r'); }).join('') + '</div>' + judge;
   }
   var mid = m.status === 'playing'
     ? '<p class="mid-k">Дело</p><p class="mid-n">' + pad(r.n) + '</p><p class="mid-of">/' + pad(m.format) + '</p>'
     : m.status === 'finished' ? '<p class="mid-k">Итог</p><p class="mid-n">' + sc.a + ':' + sc.b + '</p>'
     : '<p class="mid-k">Сбор</p><p class="mid-n">' + pad(m.format) + '</p><p class="mid-of">дел</p>';
-  var judge;
-  if(m.judgeType === 'ai') judge = '<div class="judge-strip">' + aiAvatar() + '<span><b>ИИ-судья</b> · по промту: игроки спрашивают ИИ и отмечают его вердикт</span></div>';
-  else {
-    var j = m.seats.j;
-    judge = '<div class="judge-strip' + (act === 'j' ? ' is-turn' : '') + '">' + avatar(j, m) + '<span><b>' + esc(j ? nm(j, m) : 'Судья') + '</b>' + (j && j === S.me ? '<span class="you">ты</span>' : '') +
-      (j ? ' · ' + (j === S.me || isOnline(j) ? 'в зале' : 'не в сети') : ' · место свободно') + '</span>' +
-      (!j && can && !seated ? '<button class="btn sm primary" type="button" data-act="sit" data-seat="j">' + ic('gavel') + 'Сесть судьёй</button>' : '') + '</div>';
-  }
-  return '<div class="bench-row">' + plate('a') + '<div class="bench-mid">' + mid + '</div>' + plate('b') + '</div>' + judge;
+  return '<div class="bench-row">' + plate('a', 'a') + '<div class="bench-mid">' + mid + '</div>' + plate('b', 'b') + '</div>' + judge;
 }
 function stepperHTML(m){
   var i = PHASES.indexOf(m.round.phase);
@@ -970,16 +1320,17 @@ function stepperHTML(m){
 
 /* ---------- render: stage blocks ---------- */
 function turnBlock(m, seat){
-  var r = m.round, a = actorInfo(m), uid = a.seat ? m.seats[a.seat] : null, line, mine = false;
+  var r = m.round, a = actorInfo(m), uid = a.seat ? m.seats[a.seat] : null, line, mine = false, role = roleOf(m, seat);
   if(a.seat && !uid) line = 'Ждём ' + a.label + ': место свободно';
   else if(uid && uid === S.me){ line = 'Твой ход: ' + a.mine; mine = true; }
   else if(uid) line = nm(uid) + ' ' + a.text;
-  else if(r.phase === 'judging' && m.judgeType === 'ai' && (seat === 'a' || seat === 'b')){ line = 'Твой ход: спроси ИИ-судью по промту'; mine = true; }
+  else if(r.phase === 'judging' && m.judgeType === 'ai' && isPlayer(m, seat)){ line = 'Твой ход: спроси ИИ-судью по промту'; mine = true; }
+  else if(r.phase === 'judging' && m.judgeType === 'jury' && role === 'juror' && jurors(m).indexOf(seat) >= 0 && !r.votes[seat]){ line = 'Твой ход: проголосуй как присяжный'; mine = true; }
   else line = a.text;
   var typing = uid && uid !== S.me && isTyping(uid);
-  var role = seat === 'j' ? 'ты судья в этом деле' : seat ? (seat === r.curser ? 'в этом деле ты Обвинение' : 'в этом деле ты Защита') : 'ты зритель';
+  var roleTxt = {judge:'ты судья в этом деле', cur:'в этом деле ты Обвинение', def:'в этом деле ты Защита', juror:'ты присяжный в этом деле', wait:'в этом деле ты ждёшь своей очереди', spec:'ты зритель'}[role];
   return {id:'turn', html:'<div class="turn' + (mine ? ' is-mine' : '') + '" role="status"><span class="turn-ic">' + ic(a.icon) + '</span><div class="turn-txt"><p class="turn-t">' + esc(line) +
-    (typing ? '<span class="typing" aria-label="печатает"></span>' : '') + '</p><p class="turn-s">' + esc(role) + '</p></div>' +
+    (typing ? '<span class="typing" aria-label="печатает"></span>' : '') + '</p><p class="turn-s">' + esc(roleTxt) + '</p></div>' +
     (PHASE_SEC[r.phase] ? '<span class="timer js-timer" data-since="' + (r.phaseAt || '') + '" data-limit="' + PHASE_SEC[r.phase] + '" title="Сколько длится ход"></span>' : '') + '</div>'};
 }
 function waitBlock(kind, m){
@@ -1032,21 +1383,35 @@ function curseFormBlock(m){
     '<div class="form-actions"><button class="btn primary" type="button" data-act="submitCurse">' + ic('zap') + 'Огласить проклятие</button></div></form>'};
 }
 function counterFormBlock(m){
-  var r = m.round;
+  var r = m.round, lot = m.mods.lot && r.lot && r.lot.length ? r.lot : null, vw = vowOf(m, r.def);
+  var notes = [];
+  if(vw) notes.push(ic('scroll') + '<span>Твой обет: без «' + esc(verseName(vw)) + '». Контерпик оттуда - фол Защиты.</span>');
+  if(m.mods.scorch){ var sc = scorched(m.history); if(sc.length) notes.push(ic('flame') + '<span>Выжжено: ' + esc(sc.map(function(x){ return x.name; }).join(', ')) + '.</span>'); }
+  var src = lot
+    ? '<div class="field"><span class="lbl" id="f-k-lot-lbl">Вселенная по жребию <span class="req">*</span></span><div class="lot-pick" role="radiogroup" aria-labelledby="f-k-lot-lbl">' +
+      lot.map(function(id){ return '<label class="lot-opt"><input type="radio" name="f-k-lot" value="' + id + '"><span>' + ic('dice') + esc(verseName(id)) + '</span></label>'; }).join('') +
+      '</div><p class="err" id="f-k-lot-err" hidden>' + ic('alert') + '<span>Выбери вселенную из жребия</span></p></div>' +
+      field({id:'f-k-where', label:'Где показано', draft:'k.where', ph:'Серия, глава, арка, книга правил', max:200, hint:'Без точного места вердикт может упасть на ступень'})
+    : '<div class="grid-2">' +
+      field({id:'f-k-work', label:'Произведение', draft:'k.work', req:'Без источника - фол. Укажи произведение', ph:'JoJo ч.4, D&D 5e', max:160}) +
+      field({id:'f-k-where', label:'Где показано', draft:'k.where', ph:'Серия, глава, арка, книга правил', max:200, hint:'Без точного места вердикт может упасть на ступень'}) +
+      '</div><p class="warn-inline" id="verseWarn" hidden></p>';
   return {id:'counter-form', key:'kf|' + (m.matchNo || 1) + '|' + r.n, html:'<form class="form" novalidate onsubmit="return false"><h3 class="sec-h rule-h">' + ic('shield') + 'Твой контерпик</h3>' +
     field({id:'f-k-who', label:'Кто или что снимает', draft:'k.who', req:'Назови персонажа, способность или закон мира', ph:'Например: Harvest, Истинные Имена', max:120}) +
     '<p class="warn-inline" id="burnWarn" hidden></p>' +
     field({id:'f-k-how', label:'Как именно снимает', draft:'k.how', textarea:true, ph:'Почему это бьёт по триггеру, эффекту или подвоху', max:800}) +
-    '<div class="grid-2">' +
-    field({id:'f-k-work', label:'Произведение', draft:'k.work', req:'Без источника - фол. Укажи произведение', ph:'JoJo ч.4, D&D 5e', max:160}) +
-    field({id:'f-k-where', label:'Где показано', draft:'k.where', ph:'Серия, глава, арка, книга правил', max:200, hint:'Без точного места вердикт может упасть на ступень'}) +
-    '</div><p class="rule-note">' + ic('alert') + '<span>Закон Кинжальчика: способность применяет её владелец, по канону. Универсальные отмычки - фол.</span></p>' +
+    src + notes.map(function(x){ return '<p class="rule-note">' + x + '</p>'; }).join('') +
+    '<p class="rule-note">' + ic('alert') + '<span>Закон Кинжальчика: способность применяет её владелец, по канону. Универсальные отмычки - фол.</span></p>' +
     '<div class="form-actions"><button class="btn primary" type="button" data-act="submitCounter">' + ic('shield') + 'Подать контерпик</button></div></form>'};
+}
+function lotBlock(m){
+  var r = m.round; if(!m.mods.lot || !r.lot || !r.lot.length) return null;
+  return {id:'lot', html:'<p class="notice lot-note">' + ic('dice') + '<span>Жребий вселенных: ' + esc(nm(m.seats[r.def])) + ' снимает только из ' + r.lot.map(function(id){ return '<b>' + esc(verseName(id)) + '</b>'; }).join(', ') + '</span></p>'};
 }
 function counterCardBlock(m){
   var r = m.round, k = r.counter; if(!k.who) return null;
   var src = [k.work, k.where].filter(Boolean).join(' · ');
-  return {id:'counter', html:'<article class="case" aria-label="Контерпик"><header class="case-h"><span class="tile tile-seal">' + ic('shield') + '</span><div class="case-hd"><p class="case-k">Контерпик · Защита: ' + esc(nm(m.seats[OTHER[r.curser]])) + '</p><h3 class="case-t">' + esc(k.who) + '</h3></div></header>' +
+  return {id:'counter', html:'<article class="case" aria-label="Контерпик"><header class="case-h"><span class="tile tile-seal">' + ic('shield') + '</span><div class="case-hd"><p class="case-k">Контерпик · Защита: ' + esc(nm(m.seats[r.def])) + '</p><h3 class="case-t">' + esc(k.who) + '</h3></div></header>' +
     '<dl class="dl">' + (k.how ? '<div><dt>Как снимает</dt><dd>' + esc(k.how) + '</dd></div>' : '') + '<div><dt>Источник</dt><dd>' + (src ? esc(src) : '<span class="muted">не указан</span>') + '</dd></div></dl></article>'};
 }
 function speech(who, text){ return '<blockquote class="speech"><span class="speech-who">' + esc(who) + '</span>' + esc(text) + '</blockquote>'; }
@@ -1063,7 +1428,7 @@ function debateBlock(m, role, can){
       '<p class="err" id="f-d-def-err" hidden>' + ic('alert') + '<span>Напиши ответ или нажми «Промолчать»</span></p>' +
       '<div class="form-actions"><button class="btn primary" type="button" data-act="debateSay">Ответить</button><button class="btn ghost" type="button" data-act="debateSkip">Промолчать</button></div>';
   } else {
-    var waitWho = !d.curDone ? nm(m.seats[r.curser]) + ' решает, возражать ли' : nm(m.seats[OTHER[r.curser]]) + ' готовит ответ';
+    var waitWho = !d.curDone ? nm(m.seats[r.curser]) + ' решает, возражать ли' : nm(m.seats[r.def]) + ' готовит ответ';
     body = (d.cur ? speech('Обвинение возражает', d.cur) : '') + '<p class="hint"><span class="spin" aria-hidden="true"></span> ' + esc(waitWho) + '</p>';
   }
   return {id:'debate', key:key, html:'<section class="' + (active ? 'form' : 'debate') + '"><h3 class="sec-h rule-h">' + ic('message') + 'Прения</h3>' + body + '</section>'};
@@ -1078,12 +1443,12 @@ function appealCardBlock(m){
   return {id:'appeal-card', html:'<section class="debate"><h3 class="sec-h rule-h">' + ic('scroll') + 'Апелляция<span class="sec-n">' + (a.side === r.curser ? 'обв.' : 'защ.') + '</span></h3>' +
     (p ? '<p class="hint">Первый вердикт: ' + mini(p) + '</p>' : '') + speech('Новый аргумент', a.text) + '</section>'};
 }
-function deliberating(title, sub, since){
+function deliberating(title, sub, since, extra){
   return '<div class="deliberate" role="status"><div class="gavel-anim">' + ic('gavel', 'i-xl') + '</div><p class="wait-t"><span class="spin" aria-hidden="true"></span> ' + esc(title) + '</p>' +
-    (sub ? '<p class="hint">' + esc(sub) + '</p>' : '') + '<span class="timer js-timer" data-since="' + (since || '') + '"></span></div>';
+    (sub ? '<p class="hint">' + esc(sub) + '</p>' : '') + '<span class="timer js-timer" data-since="' + (since || '') + '"></span>' + (extra || '') + '</div>';
 }
 function verdictFormHTML(m, mode){
-  var r = m.round, name = 'vf-' + mode;
+  var r = m.round, name = 'vf-' + mode, jury = mode === 'jury';
   var stamps = Object.keys(VERDICTS).map(function(k){
     var V = VERDICTS[k];
     return '<label class="stamp st-' + k + '"><input type="radio" name="' + name + '" value="' + k + '"><span><b>' + V.label + '</b><small>' + (V.who === 'def' ? 'Защита' : 'Обвинение') + ' +' + V.pts + '</small></span></label>';
@@ -1092,15 +1457,17 @@ function verdictFormHTML(m, mode){
     '<p class="err" id="' + name + '-err" hidden>' + ic('alert') + '<span>Выбери печать</span></p>' +
     '<div class="grid-2"><div class="field"><label class="lbl" for="' + name + '-el">Изящество +1</label><select id="' + name + '-el">' +
     '<option value="none">Никому</option>' +
-    '<option value="def">Защите · ' + esc(nm(m.seats[OTHER[r.curser]])) + '</option>' +
+    '<option value="def">Защите · ' + esc(nm(m.seats[r.def])) + '</option>' +
     '<option value="cur">Обвинению · ' + esc(nm(m.seats[r.curser])) + '</option></select></div>' +
-    field({id:name + '-note', label:'Реплика судьи', draft:'v.note', opt:true, ph:'Лучшая фраза из вердикта', max:200}) + '</div>' +
-    field({id:name + '-why', label: mode === 'ai' ? 'Разбор ИИ' : 'Обоснование', draft:'v.why', textarea:true, rows:4, opt:true, ph: mode === 'ai' ? 'Вставь ответ ИИ целиком или главное из него' : 'Почему такая печать', max:1500}) +
-    '<div class="form-actions"><button class="btn primary" type="button" data-act="rule" data-mode="' + mode + '">' + ic('gavel') + 'Огласить вердикт</button></div>';
+    field({id:name + '-note', label: jury ? 'Реплика' : 'Реплика судьи', draft:'v.note', opt:true, ph:'Лучшая фраза из вердикта', max:200}) + '</div>' +
+    field({id:name + '-why', label: mode === 'ai' ? 'Разбор ИИ' : jury ? 'Почему так' : 'Обоснование', draft:'v.why', textarea:true, rows: jury ? 2 : 4, opt:true,
+      ph: mode === 'ai' ? 'Вставь ответ ИИ целиком или главное из него' : 'Почему такая печать', max: jury ? 400 : 1500}) +
+    '<div class="form-actions"><button class="btn primary" type="button" data-act="' + (jury ? 'vote' : 'rule') + '" data-mode="' + mode + '">' + ic(jury ? 'users' : 'gavel') + (jury ? 'Проголосовать' : 'Огласить вердикт') + '</button></div>';
 }
 function judgeBlocks(m, role, can){
   var r = m.round, seat = mySeat(m), out = [];
   var tools = '<div class="assist"><button class="btn ghost" type="button" data-act="copyPrompt">' + ic('copy') + 'Скопировать промт</button><a class="btn ghost" href="https://claude.ai/new" target="_blank" rel="noopener">' + ic('spark') + 'Открыть Claude</a></div>';
+  if(m.judgeType === 'jury') return juryBlocks(m, role, can, tools);
   if(m.judgeType === 'human'){
     var j = m.seats.j;
     if(role === 'judge' && can){
@@ -1110,34 +1477,59 @@ function judgeBlocks(m, role, can){
     }
     if(!j){
       var btns = (!seat && can ? '<button class="btn primary" type="button" data-act="sit" data-seat="j">' + ic('gavel') + 'Сесть судьёй</button>' : '') +
-        ((seat === 'a' || seat === 'b') && can ? '<button class="btn ghost" type="button" data-act="setJudge" data-v="ai">' + ic('bot') + 'Отдать дело ИИ</button>' : '');
+        (isPlayer(m, seat) && can ? '<button class="btn ghost" type="button" data-act="setJudge" data-v="ai">' + ic('bot') + 'Отдать дело ИИ</button>' : '');
       out.push({id:'judge', html:'<div class="wait">' + art('hourglass') + '<p class="wait-t">Место судьи пустует</p><p class="hint">Сесть может любой зритель. Или игроки отдают дело ИИ по промту.</p>' + (btns ? '<div class="form-actions">' + btns + '</div>' : '') + '</div>'});
       return out;
     }
     out.push({id:'judge', html:deliberating('Судья ' + nm(j) + ' изучает дело', 'Вердикт появится у всех одновременно', r.phaseAt)});
     return out;
   }
-  if(!(seat === 'a' || seat === 'b') || !can){ out.push({id:'judge', html:deliberating('Игроки спрашивают ИИ-судью', 'Вердикт появится у всех одновременно', r.phaseAt)}); return out; }
+  if(!isPlayer(m, seat) || !can){ out.push({id:'judge', html:deliberating('Игроки спрашивают ИИ-судью', 'Вердикт появится у всех одновременно', r.phaseAt)}); return out; }
   out.push({id:'judge', key:'aj|' + r.n + '|' + (r.appeal ? 1 : 0), html:'<section class="form"><h3 class="sec-h rule-h">' + ic('gavel') + 'ИИ-судья' + (r.appeal ? '<span class="sec-n">апелляция</span>' : '') + '</h3>' +
     '<ol class="steps-ai"><li>Скопируй промт с делом.</li><li>Вставь его в чат с ИИ - например, Claude.</li><li>Отметь печать, которую он поставил, и вставь его разбор. Вердикт может внести любой из игроков.</li></ol>' +
     tools + verdictFormHTML(m, 'ai') + '</section>'});
   return out;
 }
+function juryBlocks(m, role, can, tools){
+  var r = m.round, seat = mySeat(m), js = jurors(m), votes = r.votes || {}, out = [];
+  var nv = js.filter(function(s){ return votes[s]; }).length;
+  if(!js.length){
+    var freeK = m.mode === 'duel' ? KSEATS.filter(function(k){ return !m.seats[k]; })[0] : null;
+    var btns = (freeK && !seat && can ? '<button class="btn primary" type="button" data-act="sit" data-seat="' + freeK + '">' + ic('users') + 'Сесть в присяжные</button>' : '') +
+      (isPlayer(m, seat) && can ? '<button class="btn ghost" type="button" data-act="setJudge" data-v="ai">' + ic('bot') + 'Отдать дело ИИ</button>' : '');
+    out.push({id:'judge', html:'<div class="wait">' + art('hourglass') + '<p class="wait-t">Присяжных пока нет</p><p class="hint">' + (m.mode === 'duel' ? 'Сесть в присяжные может любой зритель, до четырёх человек. ' : '') + 'Или игроки отдают дело ИИ по промту.</p>' + (btns ? '<div class="form-actions">' + btns + '</div>' : '') + '</div>'});
+    return out;
+  }
+  if(can && js.indexOf(seat) >= 0 && !votes[seat]){
+    out.push({id:'judge', key:'jv|' + r.n + '|' + (r.appeal ? 1 : 0), html:'<section class="form"><h3 class="sec-h rule-h">' + ic('users') + 'Твой голос<span class="sec-n">' + (r.appeal ? 'апелляция' : nv + '/' + js.length) + '</span></h3>' +
+      '<p class="hint">Голосуй по Уложению, а не по симпатиям. Голоса тайные, пока их не подсчитают. Решает большинство, при равенстве - печать, которую подняли раньше.</p>' + tools + verdictFormHTML(m, 'jury') + '</section>'});
+    return out;
+  }
+  var board = '<ul class="votes">' + js.map(function(s){
+    var v = votes[s];
+    return '<li class="' + (v ? 'ok' : '') + '">' + ic(v ? 'check' : 'circle') + '<span>' + esc(nm(m.seats[s], m)) + (m.seats[s] === S.me ? ' (ты)' : '') + '</span><small>' + (v ? 'голос подан' : 'думает…') + '</small></li>';
+  }).join('') + '</ul>';
+  var canClose = can && !!seat && nv > 0 && nv < js.length && nv * 2 >= js.length;
+  var extra = board + (canClose ? '<div class="form-actions"><button class="btn ghost" type="button" data-act="closeVote">' + ic('gavel') + 'Огласить по поданным голосам</button></div><p class="hint">Можно, когда проголосовала хотя бы половина. Пригодится, если кто-то из присяжных пропал.</p>' : '');
+  out.push({id:'judge', key:'jw|' + r.n + '|' + nv + '|' + js.join(',') + '|' + (canClose ? 1 : 0), html:deliberating('Присяжные совещаются', nv + ' из ' + js.length + ' голосов подано', r.phaseAt, extra)});
+  return out;
+}
 function verdictBlock(m){
   var r = m.round, v = r.verdict; if(!v) return null;
-  var code = VERDICTS[v.code] ? v.code : 'proval', V = VERDICTS[code], p = pointsFor(code, v.eleg, r.curser);
-  var pts = ['a','b'].filter(function(s){ return p[s]; }).map(function(s){ return esc(nm(m.seats[s])) + ' <b>+' + p[s] + '</b>'; }).join(' · ') || 'без очков';
-  var by = v.by === 'human' ? 'судья ' + nm(m.seats.j) : 'ИИ-судья по промту';
+  var code = VERDICTS[v.code] ? v.code : 'proval', V = VERDICTS[code], p = pointsFor(code, v.eleg, r.curser, r.def);
+  var pts = Object.keys(p).filter(function(s){ return p[s]; }).map(function(s){ return esc(nm(m.seats[s])) + ' <b>+' + p[s] + '</b>'; }).join(' · ') || 'без очков';
+  var by = v.by === 'human' ? 'судья ' + nm(m.seats.j) : v.by === 'jury' ? 'присяжные · ' + String(v.tally || '').replace('/', ' из ') + ' голосов' : 'ИИ-судья по промту';
   var why = [['Обоснование', v.why, true], ['Изящество', v.eleg && v.eleg !== 'none' ? (v.eleg === 'def' ? 'Защите' : 'Обвинению') : '']].filter(function(x){ return x[1]; });
   var quip = v.quip || v.note;
+  var votes = v.by === 'jury' && Array.isArray(v.votes) && v.votes.length ? '<div class="vote-line">' + v.votes.map(function(x){ return '<span>' + esc(nm(m.seats[x.seat])) + ' ' + mini(x.code) + '</span>'; }).join('') + '</div>' : '';
   return {id:'verdict', key:'v|' + r.n + '|' + (v.at || 0) + '|' + pts, html:'<article class="verdict v-' + code + '"><div class="v-top"><pre class="ascii-stamp" role="img" aria-label="Вердикт: ' + V.label + '">' + asciiStamp(code) + '</pre>' +
     '<div class="v-meta"><p class="case-k">Дело ' + pad(r.n) + ' · ' + esc(by) + (r.appeal ? ' · после апелляции, окончательно' : '') + '</p><p class="v-pts">' + pts + '</p></div></div>' +
-    (quip ? '<blockquote class="v-quip">' + esc(quip) + '</blockquote>' : '') +
+    (quip ? '<blockquote class="v-quip">' + esc(quip) + '</blockquote>' : '') + votes +
     (why.length ? '<dl class="dl">' + why.map(function(x){ return '<div><dt>' + x[0] + '</dt><dd' + (x[2] ? ' class="pre"' : '') + '>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl>' : '') + '</article>'};
 }
 function verdictActionsBlock(m, seat, can){
   var r = m.round, inTable = !!seat && can;
-  var appealable = (seat === 'a' || seat === 'b') && can && m.tokens[seat] && !r.appeal;
+  var appealable = (seat === r.curser || seat === r.def) && can && m.tokens[seat] && !r.appeal;
   if(S.ui.appeal && appealable){
     return {id:'v-actions', key:'ap|' + r.n, html:'<section class="form"><h3 class="sec-h rule-h">' + ic('scroll') + 'Апелляция</h3><p class="hint">Одна на матч. Дело уйдёт тому же судье с твоим аргументом, решение будет окончательным.</p>' +
       field({id:'f-ap', label:'Новый аргумент', draft:'ap', textarea:true, ph:'Что судья упустил: факт из канона, деталь механики', max:800}) +
@@ -1150,35 +1542,82 @@ function verdictActionsBlock(m, seat, can){
     (appealable ? '<button class="btn ghost" type="button" data-act="appealOpen">' + ic('scroll') + 'Апелляция</button>' : '') + '</div>';
   return {id:'v-actions', html:html};
 }
+function judgeSeg(m, id, short){
+  return '<div class="field"><span class="lbl" id="' + id + '">Кто судит</span><div class="seg" role="group" aria-labelledby="' + id + '">' +
+    ['ai','human','jury'].map(function(t){ return '<button type="button" data-act="setJudge" data-v="' + t + '" aria-pressed="' + (m.judgeType === t) + '">' + ic(judgeIcon(t)) + {ai: short ? 'ИИ' : 'ИИ', human:'Человек', jury:'Присяжные'}[t] + '</button>'; }).join('') + '</div></div>';
+}
+function formatSeg(m, id){
+  return '<div class="field"><span class="lbl" id="' + id + '">' + (m.mode === 'carousel' ? 'Сколько кругов' : 'Сколько дел') + '</span><div class="seg" role="group" aria-labelledby="' + id + '">' +
+    FORMATS[m.mode].map(function(f){ return '<button type="button" data-act="setFormat" data-v="' + f + '" aria-pressed="' + (m.format === f) + '">' + f + '</button>'; }).join('') + '</div></div>';
+}
 function lobbyBlock(m, seat){
-  var can = canAct(), ready = !!(m.seats.a && m.seats.b);
-  function row(s, label){ var uid = m.seats[s]; return '<li class="' + (uid ? 'ok' : '') + '">' + ic(uid ? 'check' : 'circle') + '<span>' + label + ': ' + (uid ? esc(nm(uid, m)) + (uid === S.me ? ' (ты)' : '') : 'свободно') + '</span></li>'; }
-  var settings = seat && can ? '<div class="settings"><div class="field"><span class="lbl" id="sJ">Кто судит</span><div class="seg" role="group" aria-labelledby="sJ">' +
-    '<button type="button" data-act="setJudge" data-v="ai" aria-pressed="' + (m.judgeType === 'ai') + '">' + ic('bot') + 'ИИ по промту</button><button type="button" data-act="setJudge" data-v="human" aria-pressed="' + (m.judgeType === 'human') + '">' + ic('gavel') + 'Человек</button></div></div>' +
-    '<div class="field"><span class="lbl" id="sF">Сколько дел</span><div class="seg" role="group" aria-labelledby="sF">' + [4,6,10].map(function(f){ return '<button type="button" data-act="setFormat" data-v="' + f + '" aria-pressed="' + (m.format === f) + '">' + f + '</button>'; }).join('') + '</div></div></div>' : '';
-  var free = !seat && can ? ['a','b'].concat(m.judgeType === 'human' ? ['j'] : []).filter(function(s){ return !m.seats[s]; }).map(function(s){
-    return '<button class="btn ' + (s === 'j' ? 'ghost' : 'primary') + '" type="button" data-act="sit" data-seat="' + s + '">' + (s === 'j' ? ic('gavel') + 'Сесть судьёй' : ic('in') + 'Сесть за Сторону ' + (s === 'a' ? 'А' : 'Б')) + '</button>';
-  }).join('') : '';
-  return {id:'lobby', html:'<section class="invite"><h3 class="sec-h rule-h">Сбор участников</h3>' +
+  var can = canAct(), ps = seatedPlayers(m), ready = ps.length >= minPlayers(m), carousel = m.mode === 'carousel';
+  var vowMiss = m.mods.vow ? ps.filter(function(s){ return !m.vows[s] || vowOffers(m, s).indexOf(m.vows[s]) < 0; }) : [];
+  function row(s){
+    var uid = m.seats[s], vw = m.mods.vow && uid && isPlayer(m, s) ? (vowMiss.indexOf(s) < 0 ? ' · обет: без «' + esc(verseName(m.vows[s])) + '»' : ' · обет не дан') : '';
+    return '<li class="' + (uid ? 'ok' : '') + '">' + ic(uid ? 'check' : 'circle') + '<span>' + seatLabel(m, s) + ': ' + (uid ? esc(nm(uid, m)) + (uid === S.me ? ' (ты)' : '') + vw : 'свободно') + '</span></li>';
+  }
+  var rows = carousel ? ps.map(row).join('') + (ps.length < 6 ? '<li>' + ic('circle') + '<span>Свободных мест: ' + (6 - ps.length) + (ps.length < 3 ? ' · нужно ещё ' + (3 - ps.length) : '') + '</span></li>' : '') : row('a') + row('b');
+  var jrow = m.judgeType === 'human' ? row('j')
+    : m.judgeType === 'jury' ? '<li class="ok">' + ic('users') + '<span>Присяжные: ' + (carousel ? 'игроки, кто не участвует в деле' : KSEATS.filter(function(k){ return m.seats[k]; }).length + ' из 4, можно сесть и после начала') + '</span></li>'
+    : '<li class="ok">' + ic('bot') + '<span>Судья: ИИ по промту</span></li>';
+  var modsHTML = '<div class="field"><span class="lbl" id="sM">Модификаторы</span><div class="mods mods-sm" role="group" aria-labelledby="sM">' + MOD_KEYS.map(function(k){
+    return '<button type="button" class="mod" data-act="setMod" data-v="' + k + '" aria-pressed="' + m.mods[k] + '"' + (seat && can ? '' : ' disabled') + '>' + ic(MODS[k].icon) + '<span><b>' + MODS[k].name + '</b><small>' + MODS[k].desc + '</small></span></button>';
+  }).join('') + '</div></div>';
+  var settings = seat && can ? '<div class="settings">' + judgeSeg(m, 'sJ') + formatSeg(m, 'sF') + '</div>' + modsHTML
+    : (modsLine(m) ? '<p class="hint">Модификаторы: ' + esc(modsLine(m)) + '</p>' : '');
+  var free = '';
+  if(!seat && can){
+    var fp = pSeats(m).filter(function(s){ return !m.seats[s]; });
+    if(carousel){ if(fp.length) free += '<button class="btn primary" type="button" data-act="sit" data-seat="' + fp[0] + '">' + ic('in') + 'Сесть в карусель</button>'; }
+    else free += fp.map(function(s){ return '<button class="btn primary" type="button" data-act="sit" data-seat="' + s + '">' + ic('in') + 'Сесть за Сторону ' + SEATL[s] + '</button>'; }).join('');
+    if(m.judgeType === 'human' && !m.seats.j) free += '<button class="btn ghost" type="button" data-act="sit" data-seat="j">' + ic('gavel') + 'Сесть судьёй</button>';
+    var fk = KSEATS.filter(function(k){ return !m.seats[k]; })[0];
+    if(!carousel && m.judgeType === 'jury' && fk) free += '<button class="btn ghost" type="button" data-act="sit" data-seat="' + fk + '">' + ic('users') + 'В присяжные</button>';
+  }
+  var canStart = ready && !vowMiss.length;
+  var hint = !ready ? (carousel ? 'Нужно хотя бы 3 игрока. Порядок по кругу решит жребий.' : 'Начать можно, когда заняты обе стороны.')
+    : vowMiss.length ? 'Ждём обет от: ' + vowMiss.map(function(s){ return nm(m.seats[s], m); }).join(', ') + '.' : '';
+  return {id:'lobby', html:'<section class="invite"><h3 class="sec-h rule-h">Сбор участников<span class="sec-n">' + MODE_LABEL[m.mode].toLowerCase() + '</span></h3>' +
     '<div class="code-row"><span class="lbl">Код стола</span><span class="big-code">' + esc(m.code.toUpperCase()) + '</span></div>' +
     '<div class="invite-actions"><button class="btn primary" type="button" data-act="copyInvite">' + ic('copy') + 'Ссылка на стол</button><button class="btn ghost" type="button" data-act="copyCode">' + ic('copy') + 'Только код</button></div>' +
-    '<p class="hint">Кинь ссылку сопернику: он откроет сайт сразу за этим столом, введёт ник и сядет. Регистрация не нужна.</p>' +
-    '<ul class="checklist">' + row('a', 'Сторона А') + row('b', 'Сторона Б') + (m.judgeType === 'human' ? row('j', 'Судья') : '<li class="ok">' + ic('bot') + '<span>Судья: ИИ по промту</span></li>') + '</ul>' + settings +
-    '<div class="form-actions">' + (seat && can ? '<button class="btn primary big" type="button" data-act="start"' + (ready ? '' : ' disabled') + '>' + ic('gavel') + 'Начать заседание</button>' : '') + free + '</div>' +
-    (seat && can && !ready ? '<p class="hint">Начать можно, когда заняты обе стороны.</p>' : '') +
+    '<p class="hint">Кинь ссылку ' + (carousel ? 'друзьям' : 'сопернику') + ': откроют сайт сразу за этим столом, введут ник и сядут. Регистрация не нужна.</p>' +
+    '<ul class="checklist">' + rows + jrow + '</ul>' + settings +
+    '<div class="form-actions">' + (seat && can ? '<button class="btn primary big" type="button" data-act="start"' + (canStart ? '' : ' disabled') + '>' + ic('gavel') + 'Начать заседание</button>' : '') + free + '</div>' +
+    (seat && can && hint ? '<p class="hint">' + esc(hint) + '</p>' : '') +
     (m.judgeType === 'human' && !m.seats.j && ready ? '<p class="hint">Судью можно дождаться и после начала: он нужен только к вердикту.</p>' : '') + '</section>'};
 }
+function vowBlock(m, seat){
+  var offers = vowOffers(m, seat), cur = m.vows[seat];
+  return {id:'vow', key:'vow|' + (m.matchNo || 1) + '|' + seat + '|' + (cur || ''), html:'<section class="form vow"><h3 class="sec-h rule-h">' + ic('scroll') + 'Связывающий обет</h3>' +
+    '<p class="hint">Тебе выпали три вселенные. От одной откажись: до конца матча твой контерпик оттуда - фол Защиты. Обет видят все за столом, так что Обвинение может бить именно туда.</p>' +
+    '<div class="vow-pick">' + offers.map(function(id){
+      var on = cur === id;
+      return '<button type="button" class="vow-opt" data-act="vow" data-v="' + id + '" aria-pressed="' + on + '"><span class="vow-k">' + (on ? 'отказ' : 'вариант') + '</span><b>' + esc(verseName(id)) + '</b></button>';
+    }).join('') + '</div>' + (cur ? '<p class="hint">Передумал - выбери другую, пока матч не начался.</p>' : '') + '</section>'};
+}
 function finalBlock(m, seat){
-  var sc = scores(m.history), w = sc.a === sc.b ? null : (sc.a > sc.b ? 'a' : 'b'), can = canAct();
-  return {id:'final', html:'<section class="final">' + art('trophy') + '<p class="eyebrow">[ заседание закрыто ]</p><h2>' + (w ? 'Победа: ' + esc(nm(m.seats[w])) : 'Ничья') + '</h2>' +
-    '<p class="final-score">' + pad(sc.a) + ':' + pad(sc.b) + '</p><p class="hint">' + esc(nm(m.seats.a)) + ' против ' + esc(nm(m.seats.b)) + ' · ' + m.history.length + ' дел</p>' +
-    '<div class="form-actions">' + (seat && can ? '<button class="btn primary" type="button" data-act="rematch">' + ic('repeat') + 'Реванш</button>' : '') + '<a class="btn ghost" href="#lobby">' + ic('home') + 'В лобби</a></div></section>'};
+  var sc = scores(m.history, m), can = canAct(), acts = '<div class="form-actions">' + (seat && can ? '<button class="btn primary" type="button" data-act="rematch">' + ic('repeat') + 'Реванш</button>' : '') + '<a class="btn ghost" href="#lobby">' + ic('home') + 'В лобби</a></div>';
+  if(m.mode === 'carousel'){
+    var list = inPlay(m).slice().sort(function(x, y){ return (sc[y] || 0) - (sc[x] || 0); }), L = leaders(sc, inPlay(m)), w = L.length === 1 ? L[0] : null;
+    return {id:'final', html:'<section class="final">' + art('trophy') + '<p class="eyebrow">[ заседание закрыто ]</p><h2>' + (w ? 'Победа: ' + esc(nm(m.seats[w])) : 'Ничья') + '</h2>' +
+      '<ol class="rank">' + list.map(function(s, i){ return '<li' + (s === w ? ' class="top"' : '') + '><span class="rank-n">' + pad(i + 1) + '</span><span class="rank-name">' + esc(nm(m.seats[s])) + '</span><b class="rank-pts">' + pad(sc[s] || 0) + '</b></li>'; }).join('') + '</ol>' +
+      '<p class="hint">Карусель · ' + m.history.length + ' дел</p>' + acts + '</section>'};
+  }
+  var w2 = sc.a === sc.b ? null : (sc.a > sc.b ? 'a' : 'b');
+  return {id:'final', html:'<section class="final">' + art('trophy') + '<p class="eyebrow">[ заседание закрыто ]</p><h2>' + (w2 ? 'Победа: ' + esc(nm(m.seats[w2])) : 'Ничья') + '</h2>' +
+    '<p class="final-score">' + pad(sc.a) + ':' + pad(sc.b) + '</p><p class="hint">' + esc(nm(m.seats.a)) + ' против ' + esc(nm(m.seats.b)) + ' · ' + m.history.length + ' дел</p>' + acts + '</section>'};
 }
 function stageBlocks(m){
   var B = [], seat = mySeat(m), can = canAct();
-  if(m.status === 'lobby'){ B.push(lobbyBlock(m, seat)); return B; }
+  if(m.status === 'lobby'){
+    var vb = m.mods.vow && isPlayer(m, seat) && can ? vowBlock(m, seat) : null;
+    // обет ещё не дан - показываем выбор первым, чтобы его не проглядели
+    if(vb && !m.vows[seat]) B.push(vb, lobbyBlock(m, seat)); else { B.push(lobbyBlock(m, seat)); if(vb) B.push(vb); }
+    return B;
+  }
   if(m.status === 'finished'){ B.push(finalBlock(m, seat)); return B; }
-  var r = m.round, role = seat === 'j' ? 'judge' : seat ? (seat === r.curser ? 'cur' : 'def') : 'spec';
+  var r = m.round, role = roleOf(m, seat);
   B.push(turnBlock(m, seat));
   switch(r.phase){
     case 'curse':
@@ -1186,6 +1625,7 @@ function stageBlocks(m){
       break;
     case 'counter':
       B.push(curseCardBlock(m));
+      if(role !== 'def') B.push(lotBlock(m));
       B = B.concat(qaBlocks(m, role, can));
       B.push(role === 'def' && can ? counterFormBlock(m) : waitBlock('counter', m));
       break;
@@ -1193,8 +1633,8 @@ function stageBlocks(m){
       B.push(curseCardBlock(m), counterCardBlock(m), debateBlock(m, role, can));
       break;
     case 'judging':
-      var jb = judgeBlocks(m, role, can), cards = [curseCardBlock(m), counterCardBlock(m), debateCardBlock(m), appealCardBlock(m)];
-      B = role === 'judge' ? B.concat(cards, jb) : B.concat(jb, cards);
+      var jb = judgeBlocks(m, role, can), cards = [curseCardBlock(m), counterCardBlock(m), lotBlock(m), debateCardBlock(m), appealCardBlock(m)];
+      B = role === 'judge' || (role === 'juror' && !r.votes[seat]) ? B.concat(cards, jb) : B.concat(jb, cards);
       break;
     case 'verdict':
       B.push(verdictBlock(m), verdictActionsBlock(m, seat, can), curseCardBlock(m), counterCardBlock(m), debateCardBlock(m));
@@ -1208,23 +1648,32 @@ function railBlocks(m){
     B.push({id:'react', key:'react|' + ownedSig(), html:'<section class="rail-sec"><h3 class="rail-h rule-h">Стикеры</h3>' + stickerPanelHTML() + '<p class="hint">Видят все в зале.</p></section>'});
   }
   var h = m.history.slice().reverse();
-  B.push({id:'proto', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Протокол<small>' + pad(m.history.length) + '/' + pad(m.format) + '</small></h3>' +
+  B.push({id:'proto', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Протокол<small>' + pad(m.history.length) + '/' + pad(totalCases(m)) + '</small></h3>' +
     (h.length ? '<ul class="proto">' + h.map(function(e){
-      var pts = ['a','b'].filter(function(s){ return e.pts && e.pts[s]; }).map(function(s){ return nm(m.seats[s]) + ' +' + e.pts[s]; }).join(', ');
+      var pts = Object.keys(e.pts || {}).filter(function(s){ return e.pts[s]; }).map(function(s){ return nm(m.seats[s]) + ' +' + e.pts[s]; }).join(', ');
       return '<li><span class="p-n">' + pad(e.n) + '</span><div><p class="p-t">' + esc(e.curse) + ' <span class="vs">vs</span> ' + esc(e.counter || 'без контерпика') + '</p>' +
         '<p class="p-m">' + mini(e.verdict) + esc(pts || 'без очков') + (e.appealed ? ' · апелляция' : '') + '</p>' +
         (e.note ? '<p class="p-note">« ' + esc(e.note) + ' »</p>' : '') + '</div></li>';
     }).join('') + '</ul>' : '<p class="hint">Пусто. Первое дело появится после вердикта.</p>') + '</section>'});
+  var on = MOD_KEYS.filter(function(k){ return m.mods[k]; });
+  if(on.length && m.status !== 'lobby'){
+    var body = on.map(function(k){ return '<p class="mod-line">' + ic(MODS[k].icon) + '<span><b>' + MODS[k].name + '</b>' + esc(MODS[k].desc) + '</span></p>'; }).join('');
+    if(m.mods.vow){
+      var vs = inPlay(m).filter(function(s){ return vowOf(m, s); });
+      if(vs.length) body += '<p class="mod-sub">Обеты</p><div class="chips">' + vs.map(function(s){ return '<span class="chip chip-vow">' + ic('scroll') + esc(nm(m.seats[s])) + ': без ' + esc(verseName(m.vows[s])) + '</span>'; }).join('') + '</div>';
+    }
+    if(m.mods.scorch){
+      var sc = scorched(m.history);
+      body += '<p class="mod-sub">Выжжено</p>' + (sc.length ? '<div class="chips">' + sc.map(function(x){ return '<span class="chip">' + ic('flame') + esc(x.name) + '</span>'; }).join('') + '</div>' : '<p class="hint">Пока ничего.</p>');
+    }
+    B.push({id:'mods', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Модификаторы</h3>' + body + '</section>'});
+  }
   var burned = burnedCards(m.history);
   B.push({id:'burned', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Сожжённые карты</h3>' +
     (burned.length ? '<div class="chips">' + burned.map(function(b){ return '<span class="chip">' + ic('flame') + esc(b.name) + '</span>'; }).join('') + '</div><p class="hint">Повтор - фол Защиты.</p>' : '<p class="hint">Пока ничего не сгорело.</p>') + '</section>'});
   if(can && (seat || m.createdBy === S.me)){
     var parts = '';
-    if(seat && m.status === 'playing'){
-      parts += '<div class="field"><span class="lbl" id="rJ">Кто судит</span><div class="seg" role="group" aria-labelledby="rJ">' +
-        '<button type="button" data-act="setJudge" data-v="ai" aria-pressed="' + (m.judgeType === 'ai') + '">' + ic('bot') + 'ИИ</button><button type="button" data-act="setJudge" data-v="human" aria-pressed="' + (m.judgeType === 'human') + '">' + ic('gavel') + 'Человек</button></div></div>' +
-        '<div class="field"><span class="lbl" id="rF">Сколько дел</span><div class="seg" role="group" aria-labelledby="rF">' + [4,6,10].map(function(f){ return '<button type="button" data-act="setFormat" data-v="' + f + '" aria-pressed="' + (m.format === f) + '">' + f + '</button>'; }).join('') + '</div></div>';
-    }
+    if(seat && m.status === 'playing') parts += judgeSeg(m, 'rJ', true) + formatSeg(m, 'rF');
     parts += '<div class="rail-actions"><button class="btn ghost" type="button" data-act="copyInvite">' + ic('copy') + 'Ссылка на стол</button>' + (seat ? '<button class="btn ghost" type="button" data-act="stand">' + ic('out') + 'Встать из-за стола</button>' : '') +
       (m.createdBy === S.me ? '<button class="btn ghost" type="button" data-act="closeTable">' + ic('trash') + 'Закрыть стол</button>' : '') + '</div>';
     B.push({id:'settings', html:'<section class="rail-sec"><h3 class="rail-h rule-h">Стол</h3>' + parts + '</section>'});
@@ -1244,6 +1693,7 @@ function renderTable(){
   patchBlocks($('stage'), stageBlocks(m));
   patchBlocks($('rail'), railBlocks(m));
   if($('burnWarn')) updateBurnWarn();
+  if($('verseWarn')) updateVerseWarn();
   tickTimers();
 }
 function updateBurnWarn(){
@@ -1252,9 +1702,18 @@ function updateBurnWarn(){
   if(hits.length){ el.innerHTML = ic('flame') + '<span>Уже сгорело: ' + esc(hits.map(function(b){ return b.name + ' (дело ' + pad(b.n) + ')'; }).join(', ')) + '. Повтор - фол Защиты.</span>'; el.hidden = false; }
   else el.hidden = true;
 }
+function updateVerseWarn(){
+  var el = $('verseWarn'), f = $('f-k-work'); if(!el || !f || !S.match || !S.match.round) return;
+  var probs = verseProblems(S.match, f.value);
+  if(probs.length){ el.innerHTML = ic('alert') + '<span>' + esc(probs.join(' ')) + '</span>'; el.hidden = false; }
+  else el.hidden = true;
+}
 function updateTitle(){
   var t = 'Суд Проклятий', m = S.match;
-  if(S.view === 'table' && m && m.status === 'playing' && m.round){ var a = actorInfo(m); if(a.seat && m.seats[a.seat] === S.me) t = 'Твой ход · Суд Проклятий'; }
+  if(S.view === 'table' && m && m.status === 'playing' && m.round){
+    var a = actorInfo(m), me = mySeat(m);
+    if((a.seat && m.seats[a.seat] === S.me) || (m.round.phase === 'judging' && m.judgeType === 'jury' && jurors(m).indexOf(me) >= 0 && !m.round.votes[me])) t = 'Твой ход · Суд Проклятий';
+  }
   if(document.title !== t) document.title = t;
 }
 function closeTray(){ $('stkTray').hidden = true; $('stkFab').setAttribute('aria-expanded', 'false'); }
@@ -1287,7 +1746,13 @@ function tickTimers(){
 /* ---------- events ---------- */
 var ACT = {
   newJudge: function(b){ S.ui.newJudge = b.dataset.v; lsSet('sp-newJudge', b.dataset.v); renderLobby(); },
-  newFormat: function(b){ S.ui.newFormat = +b.dataset.v; renderLobby(); },
+  newMode: function(b){ S.ui.newMode = b.dataset.v === 'carousel' ? 'carousel' : 'duel'; lsSet('sp-newMode', S.ui.newMode); renderLobby(); },
+  newFormat: function(b){ S.ui.newFormat[S.ui.newMode] = +b.dataset.v; renderLobby(); },
+  newMod: function(b){ var k = b.dataset.v; if(!MODS[k]) return; S.ui.newMods[k] = !S.ui.newMods[k]; lsSet('sp-newMods', JSON.stringify(S.ui.newMods)); renderLobby(); },
+  setMod: function(b){ act(b, function(){ return setMod(b.dataset.v); }); },
+  vow: function(b){ act(b, function(){ return pickVow(b.dataset.v); }); },
+  vote: function(b){ act(b, function(){ return castVote(b); }); },
+  closeVote: function(b){ act(b, closeVoting); },
   create: function(b){ act(b, createTable); },
   copyCode: function(){ if(S.code) copyText(S.code.toUpperCase(), 'Код стола скопирован: ' + S.code.toUpperCase()); },
   copyInvite: function(){ if(S.match) copyText('Го в Суд Проклятий! Стол ' + S.match.code.toUpperCase() + ':\n' + tableLink(S.match), 'Ссылка на стол скопирована - кидай сопернику'); },
@@ -1295,7 +1760,7 @@ var ACT = {
   stand: function(b){ confirmBtn(b, 'Точно встать?', function(){ act(b, standUp); }); },
   start: function(b){ act(b, startMatch); },
   setJudge: function(b){ act(b, function(){ return setJudgeType(b.dataset.v); }); },
-  setFormat: function(b){ act(b, function(){ return S.match.format === +b.dataset.v ? null : upd({format:+b.dataset.v}); }); },
+  setFormat: function(b){ act(b, function(){ var f = +b.dataset.v, m = S.match; return m.format === f || FORMATS[m.mode].indexOf(f) < 0 ? null : upd({format:f}); }); },
   deck: function(){ fillDeck(); },
   submitCurse: function(b){ act(b, function(){ return submitCurse(b); }); },
   ask: function(b){ act(b, askQ); },
@@ -1328,11 +1793,12 @@ document.addEventListener('input', function(e){
   if(f.dataset.draft){ draftSet(f.dataset.draft, f.value); setTyping(); }
   if(f.getAttribute('aria-invalid') === 'true' && f.value.trim()){ f.setAttribute('aria-invalid', 'false'); var er = $(f.id + '-err'); if(er) er.hidden = true; }
   if(f.id === 'f-k-who') updateBurnWarn();
+  if(f.id === 'f-k-work') updateVerseWarn();
   if(f.id === 'joinCode') $('joinErr').hidden = true;
   if(f.id === 'nickInput') setNick(f.value);
 });
 document.addEventListener('change', function(e){
-  var f = e.target; if(f && f.type === 'radio' && /^vf-/.test(f.name)){ var er = $(f.name + '-err'); if(er) er.hidden = true; }
+  var f = e.target; if(f && f.type === 'radio' && /^(vf-|f-k-lot)/.test(f.name)){ var er = $(f.name + '-err'); if(er) er.hidden = true; }
 });
 document.addEventListener('keydown', function(e){
   if(e.key === 'Escape'){
